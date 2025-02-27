@@ -1,209 +1,273 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
-typedef struct 
+typedef struct
 {
-    char name[50];
-    int level;
-    int hp;
-    int max_hp;
-    int strength;
-    int agility;
-    int intelligence;
-    int luck;
-    int experience;
-    int gold;
-} Character;
+	char name[50];
+    char job[20];
+	int level;
+	int hp;
+	int max_hp;
+	int strength;
+	int agility;
+	int intelligence;
+	int luck;
+	int exp;
+	
+} CHARACTER;
 
-typedef struct 
+typedef struct
 {
-    char name[50];
-    int hp;
-    int damage;
-    int gold_reward;
-    int experience_reward;
-} Monster;
+	char name[50];
+	int hp;
+	int damage;
+	int exp;
+} MOP;
 
-void print_character_status(Character* character);
-int calculate_damage(Character* character);
-void level_up(Character* character);
-void fight_monster(Character* character, Monster* monster);
-void reset_monsters(Monster* monsters, int difficulty);
-void reset_character(Character* character);
+void CreateCharacter(CHARACTER* character);
+void PrintCharacterStat(CHARACTER* character);
+void gameLoop(CHARACTER* character, MOP* mop);
+int enterDungeon(int dun_lev);
+void fightmop(CHARACTER* character, MOP* mop, int dun_lev);
+void nextDun(int* dun_lev, MOP* mop);
+void resetMop(MOP* mop, int difficulty);
+int calculateDamage(CHARACTER* character);
+void levelUp(CHARACTER* character);
 
-int main(void) 
+int main(void)
 {
-    srand((int)time(NULL));
+	srand((int)time(NULL));
 
-    Character character;
-    Monster monsters[3] = 
-    {
-        {"슬라임", 50, 5, 10, 10},
-        {"고블린", 100, 10, 20, 20},
-        {"드래곤", 200, 30, 50, 50}
-    };
+    CHARACTER character;
 
-    printf("이름을 입력하세요: ");
-    scanf_s("%s", character.name, 50);
-    reset_character(&character);
+	MOP mop[3] = 
+	{ {"슬라임", 50 , 5, 20 },
+	  {"임프", 100, 10, 30},
+	  {"고블린", 150, 15, 50} 
+	};
 
-    int dungeon_level = 1;
-    while (1) 
-    {
-        char enter_dungeon;
-        printf("\n%d층 던전에 들어가겠습니까? (y/n): ", dungeon_level);
-        scanf_s(" %c", &enter_dungeon, 1);
-
-        if (enter_dungeon == 'n' || enter_dungeon == 'N') 
-        {
-            printf("\n게임을 종료합니다.\n");
-            break;
-        }
-
-        printf("\n%d층 던전으로 들어갑니다.\n", dungeon_level);
-
-        for (int i = 0; i < 3; i++) 
-        {
-            char fight_choice;
-            printf("\n%s가 나타났습니다! 싸우겠습니까? (y/n): ", monsters[i].name);
-            scanf_s(" %c", &fight_choice, 1);
-
-            if (fight_choice == 'y' || fight_choice == 'Y') 
-            {
-                fight_monster(&character, &monsters[i]);
-
-                if (character.hp <= 0) 
-                {
-                    printf("\n캐릭터가 죽었습니다. 게임을 리셋합니다.\n");
-                    reset_character(&character);
-                    break;
-                }
-            } 
-            else 
-            {
-                printf("%s(을)를 피했습니다.\n", monsters[i].name);
-            }
-        }
-
-        reset_monsters(monsters, dungeon_level);
-
-        printf("\n%d층 던전 클리어! 다음 던전으로 이동합니다.\n", dungeon_level);
-        dungeon_level++;
-
-        char continue_game;
-        printf("\n계속 하시겠습니까? (y/n): ");
-        scanf_s(" %c", &continue_game, 1);
-
-        if (continue_game == 'n' || continue_game == 'N') 
-        {
-            printf("\n게임을 종료합니다.\n");
-            break;
-        }
-    }
-
+    CreateCharacter(&character);
+    gameLoop(&character, &mop);
     return 0;
 }
-
-void print_character_status(Character* character) 
+void CreateCharacter(CHARACTER* character)
 {
-    printf("\n--- 캐릭터 상태 ---\n");
-    printf("이름: %s\n", character->name);
-    printf("레벨: %d\n", character->level);
-    printf("체력: %d/%d\n", character->hp, character->max_hp);
-    printf("힘: %d, 민첩: %d, 지능: %d, 행운: %d\n", character->strength, character->agility, character->intelligence, character->luck);
-    printf("경험치: %d\n", character->experience);
-    printf("골드: %d\n", character->gold);
-    printf("------------------\n");
-}
+    printf("이름을 입력하세요: ");
+    scanf_s("%s", character->name, 50);
+    getchar();
 
-int calculate_damage(Character* character) 
-{
-    int base_damage = 10;
-    double damage_multiplier = 1.0;
+    printf("\n--- 직업 선택 ---\n");
+    printf("1. 전사(Warrior): 힘과 체력이 높음\n");
+    printf("2. 도적(Rogue): 민첩하고 회피력이 높음\n");
+    printf("3. 마법사(Mage): 지능이 높고 마법 공격 강함\n");
+    printf("4. 행운사(Lucky): 행운이 높아 치명타 확률 높음\n");
+    printf("직업을 선택하세요 (1-4): ");
 
-    damage_multiplier += 1.2 * character->strength / 100.0;
-    damage_multiplier += 0.8 * character->agility / 100.0;
-    damage_multiplier += 0.4 * character->intelligence / 100.0;
-    damage_multiplier += 1.1 * character->luck / 100.0;
+    int choice;
+    scanf_s("%d", &choice);
 
-    return (int)(base_damage * damage_multiplier);
-}
-
-void level_up(Character* character) 
-{
-    int stat_increase = rand() % 4;
-    int stat2_increase = rand() % 4;
-
-    while (stat2_increase == stat_increase) 
+    switch (choice)
     {
-        stat2_increase = rand() % 4;
+    case 1:
+        strcpy_s(character->job, sizeof(character->job), "전사");
+        character->strength = 10;
+        character->agility = 5;
+        character->intelligence = 3;
+        character->luck = 2;
+        character->max_hp = 120;
+        break;
+    case 2:
+        strcpy_s(character->job, sizeof(character->job), "궁수");
+        character->strength = 5;
+        character->agility = 10;
+        character->intelligence = 4;
+        character->luck = 3;
+        character->max_hp = 100;
+        break;
+    case 3:
+        strcpy_s(character->job, sizeof(character->job), "마법사");
+        character->strength = 3;
+        character->agility = 4;
+        character->intelligence = 10;
+        character->luck = 3;
+        character->max_hp = 90;
+        break;
+    case 4:
+        strcpy_s(character->job, sizeof(character->job), "도적");
+        character->strength = 4;
+        character->agility = 5;
+        character->intelligence = 4;
+        character->luck = 10;
+        character->max_hp = 100;
+        break;
+    default:
+        printf("잘못된 선택입니다. 전사로 설정합니다.\n");
+        strcpy_s(character->job, sizeof(character->job), "전사");
+        character->strength = 10;
+        character->agility = 5;
+        character->intelligence = 3;
+        character->luck = 2;
+        character->max_hp = 120;
     }
 
-    switch (stat_increase) 
-    {
-    case 0: character->strength += 2; break;
-    case 1: character->agility += 2; break;
-    case 2: character->intelligence += 2; break;
-    case 3: character->luck += 2; break;
-    }
+    character->level = 1;
+    character->hp = character->max_hp;
+    character->exp = 0;
 
-    switch (stat2_increase) 
-    {
-    case 0: character->strength += 2; break;
-    case 1: character->agility += 2; break;
-    case 2: character->intelligence += 2; break;
-    case 3: character->luck += 2; break;
-    }
-
-    character->level++;
-    character->experience = 0;
-    printf("\n레벨업! %d 레벨에 도달했습니다.\n", character->level);
-    print_character_status(character);
+    printf("\n캐릭터 생성 완료!\n");
+    PrintCharacterStat(character);
 }
-
-void fight_monster(Character* character, Monster* monster) 
+void PrintCharacterStat(CHARACTER* character)
 {
-    printf("%s과(와) 싸운다!\n", monster->name);
-    int damage = calculate_damage(character);
-    monster->hp -= damage;
-
-    printf("당신은 %d의 데미지를 입혔습니다.\n", damage);
-
-    if (monster->hp <= 0) 
+	printf("\n--- 캐릭터 상태 ---\n");
+	printf("이름: %s\n", character->name);
+	printf("레벨: %d\n", character->level);
+	printf("체력: %d/%d\n", character->hp, character->max_hp);
+	printf("힘: %d, 민첩: %d, 지능: %d, 행운: %d\n", character->strength, character->agility, 
+                                                    character->intelligence, character->luck);
+	printf("경험치: %d\n", character->exp);
+}
+void gameLoop(CHARACTER* character, MOP* mop)
+{
+    int dun_lev = 1;
+    while (1)
     {
-        printf("%s를 처치했습니다!\n", monster->name);
-        character->experience += monster->experience_reward;
-        character->gold += monster->gold_reward;
-
-        if (character->experience >= 100) 
+        if (!enterDungeon(dun_lev))
         {
-            level_up(character);
+            printf("\n게임을 종료합니다.\n");
+            break;
         }
 
-        print_character_status(character);
+        fightmop(character, mop, dun_lev);
+        nextDun(&dun_lev, mop);
     }
 }
-
-void reset_monsters(Monster* monsters, int difficulty) 
+int enterDungeon(int dun_lev)
 {
-    for (int i = 0; i < 3; i++) {
-        monsters[i].hp += difficulty * 20;
-        monsters[i].damage += difficulty * 2;
+    char enter;
+    printf("%d층 던전에 입장하시겠습니까? (y/n): ", dun_lev);
+    scanf_s(" %c", &enter, 1);
+    getchar();
+
+    if (enter == 'n' || enter == 'N')
+    {
+        return 0;
+    }
+    return 1;
+}
+void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
+{
+    int i = 0;
+    for (i = 0;i < 3;i++)
+    {
+        char fight;
+        int damTomop;
+        int damTochr;
+
+        printf("%s가 나타났다! 싸우겠습니까? (y/n)", mop[i].name);
+        scanf_s(" %c", &fight, 1);
+        getchar();
+
+        if (fight == 'y' || fight == 'Y')
+        {
+            printf("%s와 전투를 시작합니다!\n", mop[i].name);
+            while (mop[i].hp > 0 && character->hp > 0)
+            {
+                damTomop = calculateDamage(character);
+                mop[i].hp -= damTomop;
+                printf("%s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, damTomop, mop[i].hp);
+
+                if (mop[i].hp <= 0)
+                {
+                    printf("%s를 처치했다! \n", mop[i].name);
+                    character->exp += mop[i].exp;
+                    printf("%d의 경험치를 획득했다!!", mop[i].exp);
+                    PrintCharacterStat(character);
+
+                    levelUp(character);
+                    break;
+                }
+
+                damTochr = mop[i].damage;
+                character->hp -= damTochr;
+                printf("%s가 %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
+                if (character->hp <= 0)
+                {
+                    printf("%s가 사망했습니다... 게임 오버!\n", character->name);
+                    exit(0);
+                }
+            } 
+        }
+        else
+        {
+            printf("%s(을)를 회피했습니다.. \n", mop[i].name);
+        }
     }
 }
-
-void reset_character(Character* character) 
+void nextDun(int* dun_lev, MOP* mop)
 {
-    printf("\n새 캐릭터를 생성합니다.\n");
-    character->level = 1;
-    character->hp = 100;
-    character->max_hp = 100;
-    character->strength = 5;
-    character->agility = 5;
-    character->intelligence = 5;
-    character->luck = 5;
-    character->experience = 0;
-    character->gold = 0;
+    char next;
+    resetMop(mop, *dun_lev);
+    printf("%d층 클리어!! 다음 층으로 이동하시겠습니까? (y/n)", *dun_lev);
+    scanf_s(" %c", &next, 1);
+    getchar();
+
+    if (next == 'y'||next == 'Y')
+    {
+        (*dun_lev)++;
+    }
+    else
+    {
+        printf("게임을 종료합니다\n");
+        exit(0);
+    }
+}
+void resetMop(MOP* mop, int difficulty)
+{
+    int i = 0;
+    for (i = 0;i < 3;i++)
+    {
+        mop[i].hp += difficulty * 20;
+        mop[i].damage += difficulty * 2;
+    }
+}
+int calculateDamage(CHARACTER* character)
+{
+    int basedam = 10;
+    double dammul = 1.0;
+
+    dammul += character->strength * 0.8;
+    dammul += character->agility * 0.7;
+    dammul += character->intelligence * 0.5;
+    dammul += character->luck * 0.9;
+
+    return (int)(basedam * dammul);
+}
+
+void levelUp(CHARACTER* character)
+{
+    if (character->exp >= 100)
+    {
+        character->level++;
+        character->exp -= 100;
+
+        printf("\n레벨업! %d 레벨에 도달했습니다.\n", character->level);
+
+        int stat_increase1 = rand() % 4;
+        int stat_increase2 = rand() % 4;
+        while (stat_increase1 == stat_increase2)
+        {
+            stat_increase2 = rand() % 4;
+        }
+
+        int* stats[] = { &character->strength, &character->agility, &character->intelligence, &character->luck };
+        *stats[stat_increase1] += 2;
+        *stats[stat_increase2] += 2;
+
+        printf("스탯이 상승했습니다!\n");
+        PrintCharacterStat(character);
+    }
 }
 
