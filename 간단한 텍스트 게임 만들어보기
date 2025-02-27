@@ -25,6 +25,67 @@ typedef struct
     int experience_reward;
 } Monster;
 
+void print_character_status(Character* character);
+int calculate_damage(Character* character);
+void level_up(Character* character);
+void fight_monster(Character* character, Monster* monster);
+void reset_monsters(Monster* monsters, int difficulty);
+void reset_character(Character* character);
+
+int main(void) 
+{
+    srand((int)time(NULL));
+
+    Character character;
+    Monster monsters[3] = 
+    {
+        {"슬라임", 50, 5, 10, 10},
+        {"고블린", 100, 10, 20, 20},
+        {"드래곤", 200, 30, 50, 50}
+    };
+
+    printf("이름을 입력하세요: ");
+    scanf_s("%s", character.name);
+    reset_character(&character);
+
+    int dungeon_level = 1;
+    while (1) 
+    {
+        printf("\n%d층 던전으로 들어갑니다.\n", dungeon_level);
+
+        for (int i = 0; i < 3; i++) 
+        {
+            fight_monster(&character, &monsters[i]);
+
+            if (character.hp <= 0) 
+            {
+                printf("\n캐릭터가 죽었습니다. 게임을 리셋합니다.\n");
+                reset_character(&character);
+                break;
+            }
+        }
+
+        // 던전 클리어 후 몬스터 강도 증가
+        reset_monsters(monsters, dungeon_level);
+
+        printf("\n%d층 던전 클리어! 다음 던전으로 이동합니다.\n", dungeon_level);
+        dungeon_level++;
+
+        // 계속 반복 (게임을 계속 하고 싶으면 무한 루프)
+        char continue_game;
+        printf("\n계속 하시겠습니까? (y/n): ");
+        scanf_s("%c", &continue_game);
+
+        if (continue_game == 'n' || continue_game == 'N') 
+        {
+            printf("\n게임을 종료합니다.\n");
+            break;
+        }
+    }
+
+    return 0;
+}
+
 void print_character_status(Character* character) 
 {
     printf("\n--- 캐릭터 상태 ---\n");
@@ -132,58 +193,3 @@ void reset_character(Character* character)
     character->experience = 0;
     character->gold = 0;
 }
-
-int main() 
-{
-    srand((int)time(NULL));
-
-    Character character;
-    Monster monsters[3] = 
-    {
-        {"슬라임", 50, 5, 10, 10},
-        {"고블린", 100, 10, 20, 20},
-        {"드래곤", 200, 30, 50, 50}
-    };
-
-    printf("이름을 입력하세요: ");
-    scanf_s("%s", character.name);
-    reset_character(&character);
-
-    int dungeon_level = 1;
-    while (1) 
-    {
-        printf("\n%d층 던전으로 들어갑니다.\n", dungeon_level);
-
-        for (int i = 0; i < 3; i++) 
-        {
-            fight_monster(&character, &monsters[i]);
-
-            if (character.hp <= 0) 
-            {
-                printf("\n캐릭터가 죽었습니다. 게임을 리셋합니다.\n");
-                reset_character(&character);
-                break;
-            }
-        }
-
-        // 던전 클리어 후 몬스터 강도 증가
-        reset_monsters(monsters, dungeon_level);
-
-        printf("\n%d층 던전 클리어! 다음 던전으로 이동합니다.\n", dungeon_level);
-        dungeon_level++;
-
-        // 계속 반복 (게임을 계속 하고 싶으면 무한 루프)
-        char continue_game;
-        printf("\n계속 하시겠습니까? (y/n): ");
-        scanf_s("%c", &continue_game);
-
-        if (continue_game == 'n' || continue_game == 'N') 
-        {
-            printf("\n게임을 종료합니다.\n");
-            break;
-        }
-    }
-
-    return 0;
-}
-
