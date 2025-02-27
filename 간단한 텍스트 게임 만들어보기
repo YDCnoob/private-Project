@@ -135,7 +135,7 @@ void reset_character(Character* character)
 
 int main() 
 {
-    srand(time(NULL));
+    srand((int)time(NULL));
 
     Character character;
     Monster monsters[3] = 
@@ -146,7 +146,7 @@ int main()
     };
 
     printf("이름을 입력하세요: ");
-    scanf("%s", character.name);
+    scanf_s("%s", character.name);
     reset_character(&character);
 
     int dungeon_level = 1;
@@ -175,7 +175,7 @@ int main()
         // 계속 반복 (게임을 계속 하고 싶으면 무한 루프)
         char continue_game;
         printf("\n계속 하시겠습니까? (y/n): ");
-        scanf("%c", &continue_game);
+        scanf_s("%c", &continue_game);
 
         if (continue_game == 'n' || continue_game == 'N') 
         {
