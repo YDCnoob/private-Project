@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef struct {
+typedef struct 
+{
     char name[50];
     int level;
     int hp;
@@ -15,7 +16,8 @@ typedef struct {
     int gold;
 } Character;
 
-typedef struct {
+typedef struct 
+{
     char name[50];
     int hp;
     int damage;
@@ -23,7 +25,8 @@ typedef struct {
     int experience_reward;
 } Monster;
 
-void print_character_status(Character* character) {
+void print_character_status(Character* character) 
+{
     printf("\n--- 캐릭터 상태 ---\n");
     printf("이름: %s\n", character->name);
     printf("레벨: %d\n", character->level);
@@ -34,7 +37,8 @@ void print_character_status(Character* character) {
     printf("------------------\n");
 }
 
-int calculate_damage(Character* character) {
+int calculate_damage(Character* character) 
+{
     // 힘, 민첩, 지능, 행운에 따른 데미지 계산
     int base_damage = 10; // 기본 데미지
     double damage_multiplier = 1.0;
@@ -47,28 +51,32 @@ int calculate_damage(Character* character) {
     return (int)(base_damage * damage_multiplier);
 }
 
-void level_up(Character* character) {
+void level_up(Character* character) 
+{
     // 레벨업 시 랜덤으로 2개의 스탯 증가
     int stat_increase = rand() % 3;  // 0: strength, 1: agility, 2: intelligence, 3: luck
     int stat2_increase = rand() % 3;
 
     // 두 개의 스탯이 동일하지 않도록 처리
-    while (stat2_increase == stat_increase) {
+    while (stat2_increase == stat_increase) 
+    {
         stat2_increase = rand() % 4;
     }
 
-    switch (stat_increase) {
-        case 0: character->strength += 1; break;
-        case 1: character->agility += 1; break;
-        case 2: character->intelligence += 1; break;
-        case 3: character->luck += 1; break;
+    switch (stat_increase) 
+    {
+    case 0: character->strength += 1; break;
+    case 1: character->agility += 1; break;
+    case 2: character->intelligence += 1; break;
+    case 3: character->luck += 1; break;
     }
 
-    switch (stat2_increase) {
-        case 0: character->strength += 1; break;
-        case 1: character->agility += 1; break;
-        case 2: character->intelligence += 1; break;
-        case 3: character->luck += 1; break;
+    switch (stat2_increase) 
+    {
+    case 0: character->strength += 1; break;
+    case 1: character->agility += 1; break;
+    case 2: character->intelligence += 1; break;
+    case 3: character->luck += 1; break;
     }
 
     character->level++;
@@ -77,20 +85,23 @@ void level_up(Character* character) {
     print_character_status(character);
 }
 
-void fight_monster(Character* character, Monster* monster) {
+void fight_monster(Character* character, Monster* monster) 
+{
     printf("%s과(와) 싸운다!\n", monster->name);
     int damage = calculate_damage(character);
     monster->hp -= damage;
 
     printf("당신은 %d의 데미지를 입혔습니다.\n", damage);
 
-    if (monster->hp <= 0) {
+    if (monster->hp <= 0) 
+    {
         printf("%s를 처치했습니다!\n", monster->name);
         character->experience += monster->experience_reward;
         character->gold += monster->gold_reward;
 
         // 경험치가 일정량 이상일 때 레벨업
-        if (character->experience >= 100) {
+        if (character->experience >= 100) 
+        {
             level_up(character);
         }
 
@@ -98,7 +109,8 @@ void fight_monster(Character* character, Monster* monster) {
     }
 }
 
-void reset_monsters(Monster* monsters, int difficulty) {
+void reset_monsters(Monster* monsters, int difficulty) 
+{
     // 몬스터의 강도를 증가시킨다 (체력과 데미지)
     for (int i = 0; i < 3; i++) {
         monsters[i].hp += difficulty * 20;
@@ -106,7 +118,8 @@ void reset_monsters(Monster* monsters, int difficulty) {
     }
 }
 
-void reset_character(Character* character) {
+void reset_character(Character* character) 
+{
     // 캐릭터 리셋 (새 캐릭터 생성)
     printf("\n새 캐릭터를 생성합니다.\n");
     character->level = 1;
@@ -120,11 +133,13 @@ void reset_character(Character* character) {
     character->gold = 0;
 }
 
-int main() {
+int main() 
+{
     srand(time(NULL));
 
     Character character;
-    Monster monsters[3] = {
+    Monster monsters[3] = 
+    {
         {"슬라임", 50, 5, 10, 10},
         {"고블린", 100, 10, 20, 20},
         {"드래곤", 200, 30, 50, 50}
@@ -135,13 +150,16 @@ int main() {
     reset_character(&character);
 
     int dungeon_level = 1;
-    while (1) {
+    while (1) 
+    {
         printf("\n%d층 던전으로 들어갑니다.\n", dungeon_level);
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) 
+        {
             fight_monster(&character, &monsters[i]);
 
-            if (character.hp <= 0) {
+            if (character.hp <= 0) 
+            {
                 printf("\n캐릭터가 죽었습니다. 게임을 리셋합니다.\n");
                 reset_character(&character);
                 break;
@@ -157,9 +175,10 @@ int main() {
         // 계속 반복 (게임을 계속 하고 싶으면 무한 루프)
         char continue_game;
         printf("\n계속 하시겠습니까? (y/n): ");
-        scanf(" %c", &continue_game);
+        scanf("%c", &continue_game);
 
-        if (continue_game == 'n' || continue_game == 'N') {
+        if (continue_game == 'n' || continue_game == 'N') 
+        {
             printf("\n게임을 종료합니다.\n");
             break;
         }
