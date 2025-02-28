@@ -1,7 +1,15 @@
+// 1차 수정 사항 = 함수 추가(게임 반복 함수)
+// 2차 수정 사항 = 함수 추가(전투 관련 함수)
+// 3차 수정 사항 = 전투 관련 함수 계산식 및 코드 수정
+// 4차 수정 사항 = 
+
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 
 typedef struct
 {
@@ -20,10 +28,12 @@ typedef struct
 
 typedef struct
 {
-	char name[50];
-	int hp;
-	int damage;
-	int exp;
+    char name[50];
+    int base_hp;
+    int hp;
+    int basDam;
+    int dam;
+    int exp;
 } MOP;
 
 void CreateCharacter(CHARACTER* character);
@@ -43,9 +53,9 @@ int main(void)
     CHARACTER character;
 
 	MOP mop[3] = 
-	{ {"슬라임", 50 , 5, 20 },
-	  {"임프", 100, 10, 30},
-	  {"고블린", 150, 15, 50} 
+	{ {"슬라임", 200, 200 , 5, 5, 40 },
+	  {"임프", 300, 300, 10, 10, 60},
+	  {"고블린", 400, 400, 13, 13, 100}
 	};
 
     CreateCharacter(&character);
@@ -56,7 +66,6 @@ void CreateCharacter(CHARACTER* character)
 {
     printf("이름을 입력하세요: ");
     scanf_s("%s", character->name, 50);
-    getchar();
 
     printf("\n--- 직업 선택 ---\n");
     printf("1. 전사(Warrior): 힘과 체력이 높음\n");
@@ -190,7 +199,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                     break;
                 }
 
-                damTochr = mop[i].damage;
+                damTochr = mop[i].dam;
                 character->hp -= damTochr;
                 printf("%s가 %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
                 if (character->hp <= 0)
@@ -229,21 +238,21 @@ void resetMop(MOP* mop, int difficulty)
     int i = 0;
     for (i = 0;i < 3;i++)
     {
-        mop[i].hp += difficulty * 20;
-        mop[i].damage += difficulty * 2;
+        mop[i].hp = mop[i].base_hp + difficulty * 20;
+        mop[i].dam = mop[i].basDam + difficulty * 2;
     }
 }
 int calculateDamage(CHARACTER* character)
 {
-    int basedam = 10;
+    int basdam = 5;
     double dammul = 1.0;
 
-    dammul += character->strength * 0.8;
-    dammul += character->agility * 0.7;
-    dammul += character->intelligence * 0.5;
-    dammul += character->luck * 0.9;
+    dammul += sqrt(character->strength) * 1.2;
+    dammul += sqrt(character->agility) * 1.0;
+    dammul += sqrt(character->intelligence) * 0.8;
+    dammul += sqrt(character->luck) * 1.4;
 
-    return (int)(basedam * dammul);
+    return (int)(basdam * dammul);
 }
 
 void levelUp(CHARACTER* character)
@@ -252,6 +261,8 @@ void levelUp(CHARACTER* character)
     {
         character->level++;
         character->exp -= 100;
+        character->max_hp += 10;
+        character->hp = character->max_hp;
 
         printf("\n레벨업! %d 레벨에 도달했습니다.\n", character->level);
 
