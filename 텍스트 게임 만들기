@@ -1,9 +1,13 @@
 // 1차 수정 사항 = 함수 추가(게임 반복 함수)
 // 2차 수정 사항 = 함수 추가(전투 관련 함수)
 // 3차 수정 사항 = 전투 관련 함수 계산식 및 코드 수정
-// 4차 수정 사항 = 
-
-
+// 4차 수정 사항 = 프로그램 코드 재 점검
+// 
+// 
+// 
+// 
+// 
+// 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +27,7 @@ typedef struct
 	int intelligence;
 	int luck;
 	int exp;
+    int totalScore;
 	
 } CHARACTER;
 
@@ -65,7 +70,7 @@ int main(void)
 void CreateCharacter(CHARACTER* character)
 {
     printf("이름을 입력하세요: ");
-    scanf_s("%s", character->name, 50);
+    scanf_s("%s", (*character).name, 50);
 
     printf("\n--- 직업 선택 ---\n");
     printf("1. 전사(Warrior): 힘과 체력이 높음\n");
