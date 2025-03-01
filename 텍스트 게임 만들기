@@ -18,7 +18,7 @@
 typedef struct
 {
 	char name[50];
-    char job[20];
+    	char job[20];
 	int level;
 	int hp;
 	int max_hp;
@@ -27,8 +27,7 @@ typedef struct
 	int intelligence;
 	int luck;
 	int exp;
-    int totalScore;
-	
+
 } CHARACTER;
 
 typedef struct
