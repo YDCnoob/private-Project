@@ -2,12 +2,6 @@
 // 2차 수정 사항 = 함수 추가(전투 관련 함수)
 // 3차 수정 사항 = 전투 관련 함수 계산식 및 코드 수정
 // 4차 수정 사항 = 프로그램 코드 재 점검
-// 
-// 
-// 
-// 
-// 
-// 
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -40,7 +34,7 @@ typedef struct
     int exp;
 } MOP;
 
-// 구조체를 이용해 캐릭터의 기본 정보, 몬스터의 기본 정보를 입력할수있게 됨
+// 구조체를 이용해 캐릭터 정보, 몬스터 정보를 한 덩어리로 묶을수있다.
 
 void CreateCharacter(CHARACTER* character);
 void PrintCharacterStat(CHARACTER* character);
@@ -65,7 +59,7 @@ int main(void)
     };
 
     CreateCharacter(&character);
-    gameLoop(&character, &mop); // 실질적으로 이 게임의 실행부분을 담당하는 함수
+    gameLoop(&character, &mop); // 이 게임의 실행부분을 담당
     return 0;
 }
 void CreateCharacter(CHARACTER* character)
@@ -84,7 +78,7 @@ void CreateCharacter(CHARACTER* character)
     int choice;
     scanf_s("%d", &choice);
 
-    switch (choice) // switch를 사용해 사용자가 원하는 직업을 고를수 있게 해줌
+    switch (choice)
     {
     case 1:
         strcpy_s(character->job, sizeof(character->job), "전사");
@@ -168,7 +162,7 @@ int enterDungeon(int dun_lev)
     scanf_s(" %c", &enter, 1); 
     getchar(); 
     // 왜 getchar()를 넣었는가? '\n' 개행문자인식 오류로 인해 중간에 전투 과정이 생략되는 현상 발생
-    // 개행문자 제거용으로 getchar()를 넣으니 문제 없이 잘 돌아감
+    // getchar()를 넣으니 문제 없이 잘 돌아감
 
     if (enter == 'n' || enter == 'N') // 대.소문자 상관없이 진행을 위해서
     {
@@ -258,7 +252,7 @@ int calculateDamage(CHARACTER* character)
     double dammul = 1.0; // 데미지 배수 조정
 
     dammul += sqrt(character->strength) * 1.2;
-    // 캐릭터의 데미지가 너무 강하게 나와서 캐릭터와 몬스터의 수치를 둘다 건드려봤으나 한쪽으로 치우쳐져서 sqrt 함수로 캐릭터의 데미지를 조정함
+    // 캐릭터의 데미지가 너무 강하게 나와서 sqrt 함수로 캐릭터의 데미지를 조정함
     dammul += sqrt(character->agility) * 1.0;
     dammul += sqrt(character->intelligence) * 0.8;
     dammul += sqrt(character->luck) * 1.4;
