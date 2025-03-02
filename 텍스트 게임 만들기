@@ -3,6 +3,7 @@
 // 3차 수정 사항 = 전투 관련 함수 계산식 및 코드 수정
 // 4차 수정 사항 = 프로그램 코드 재 점검
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -62,7 +63,7 @@ int main(void)
 void CreateCharacter(CHARACTER* character)
 {
     printf("이름을 입력하세요: ");
-    scanf_s("%s", (*character).name, (unsigned int)sizeof((*character).name)); 
+    scanf_s("%s", (*character).name, (unsigned int)sizeof((*character).name));
 
     printf("\n--- 직업 선택 ---\n");
     printf("1. 전사(Warrior): 힘과 체력이 높음\n");
@@ -155,9 +156,9 @@ int enterDungeon(int dun_lev)
 {
     char enter;
     printf("%d층 던전에 입장하시겠습니까? (y/n): ", dun_lev);
-    scanf_s(" %c", &enter, 1); 
-    getchar(); 
-    
+    scanf_s(" %c", &enter, 1);
+    getchar();
+
     if (enter == 'n' || enter == 'N')
     {
         return 0;
@@ -231,7 +232,7 @@ void nextDun(int* dun_lev, MOP* mop)
         exit(0);
     }
 }
-void resetMop(MOP* mop, int difficulty) 
+void resetMop(MOP* mop, int difficulty)
 {
     int i = 0;
     for (i = 0;i < 3;i++)
@@ -242,8 +243,8 @@ void resetMop(MOP* mop, int difficulty)
 }
 int calculateDamage(CHARACTER* character)
 {
-    int basdam = 5; 
-    double dammul = 1.0; 
+    int basdam = 5;
+    double dammul = 1.0;
 
     dammul += sqrt(character->strength) * 1.2;
     dammul += sqrt(character->agility) * 1.0;
@@ -263,14 +264,14 @@ void levelUp(CHARACTER* character)
         character->hp = character->max_hp;
 
         printf("\n레벨업! %d 레벨에 도달했습니다.\n", character->level);
-        
+
         int stat_increase1 = rand() % 4;
         int stat_increase2 = rand() % 4;
         while (stat_increase1 == stat_increase2)
         {
             stat_increase2 = rand() % 4;
         }
-        
+
         int* stats[] = { &character->strength, &character->agility, &character->intelligence, &character->luck };
         *stats[stat_increase1] += 2;
         *stats[stat_increase2] += 2;
