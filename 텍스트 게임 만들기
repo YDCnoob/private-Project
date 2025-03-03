@@ -1,7 +1,7 @@
 // 1차 수정 사항 = 함수 추가(게임 반복 함수)
 // 2차 수정 사항 = 함수 추가(전투 관련 함수)
 // 3차 수정 사항 = 전투 관련 함수 계산식 및 코드 수정
-// 4차 수정 사항 = 프로그램 코드 재 점검
+// 4차 수정 사항 = 2차,3차 전직 추가
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -147,7 +147,6 @@ void gameLoop(CHARACTER* character, MOP* mop)
             printf("\n게임을 종료합니다.\n");
             break;
         }
-
         fightmop(character, mop, dun_lev);
         nextDun(&dun_lev, mop);
     }
@@ -278,5 +277,112 @@ void levelUp(CHARACTER* character)
 
         printf("스탯이 상승했습니다!\n");
         PrintCharacterStat(character);
+
+        if ((*character).level == 20 || character->level == 40)
+        {
+            promoteCharacter(character);
+        }
     }
+}
+void promoteCharacter(CHARACTER* character)
+{
+    printf("\n--- 전직 가능! ---\n");
+    printf("현재 직업: %s\n", character->job);
+
+    if (character->level == 20)
+    {
+        if (strcmp(character->job, "전사") == 0)
+        {
+            printf("1. 나이트 (방어력 증가)\n");
+            printf("2. 버서커 (공격력 증가)\n");
+        }
+        else if (strcmp(character->job, "궁수") == 0)
+        {
+            printf("1. 레인저 (회피율 증가)\n");
+            printf("2. 스나이퍼 (명중률 증가)\n");
+        }
+        else if (strcmp(character->job, "마법사") == 0)
+        {
+            printf("1. 원소술사 (마법 공격력 증가)\n");
+            printf("2. 흑마법사 (저주 스킬 추가)\n");
+        }
+        else if (strcmp(character->job, "도적") == 0)
+        {
+            printf("1. 어쌔신 (치명타 확률 증가)\n");
+            printf("2. 섀도우 (회피율 증가)\n");
+        }
+    }
+    else if (character->level == 40)
+    {
+        if (strcmp(character->job, "나이트") == 0)
+        {
+            printf("1. 팔라딘 (방어력 + 회복 능력 추가)\n");
+        }
+        else if (strcmp(character->job, "버서커") == 0)
+        {
+            printf("1. 워로드 (공격력 + 광역 공격 추가)\n");
+        }
+        else if (strcmp(character->job, "레인저") == 0)
+        {
+            printf("1. 샤프슈터 (원거리 공격력 증가)\n");
+        }
+        else if (strcmp(character->job, "스나이퍼") == 0)
+        {
+            printf("1. 헌터 (속사 기술 추가)\n");
+        }
+        else if (strcmp(character->job, "원소술사") == 0)
+        {
+            printf("1. 아크메이지 (마법 공격 최강)\n");
+        }
+        else if (strcmp(character->job, "흑마법사") == 0)
+        {
+            printf("1. 네크로맨서 (소환수 사용 가능)\n");
+        }
+        else if (strcmp(character->job, "어쌔신") == 0)
+        {
+            printf("1. 나이트메어 (은신 & 치명타 증가)\n");
+        }
+        else if (strcmp(character->job, "섀도우") == 0)
+        {
+            printf("1. 닌자 (속도 증가)\n");
+        }
+    }
+
+    printf("전직을 선택하세요 (1-2): ");
+    int choice;
+    scanf_s("%d", &choice);
+
+    if (character->level == 20)
+    {
+        if (strcmp(character->job, "전사") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "나이트" : "버서커");
+        else if (strcmp(character->job, "궁수") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "레인저" : "스나이퍼");
+        else if (strcmp(character->job, "마법사") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "원소술사" : "흑마법사");
+        else if (strcmp(character->job, "도적") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "어쌔신" : "섀도우");
+    }
+    else if (character->level == 40)
+    {
+        if (strcmp(character->job, "나이트") == 0)
+            strcpy_s(character->job, sizeof(character->job), "팔라딘");
+        else if (strcmp(character->job, "버서커") == 0)
+            strcpy_s(character->job, sizeof(character->job), "워로드");
+        else if (strcmp(character->job, "레인저") == 0)
+            strcpy_s(character->job, sizeof(character->job), "샤프슈터");
+        else if (strcmp(character->job, "스나이퍼") == 0)
+            strcpy_s(character->job, sizeof(character->job), "헌터");
+        else if (strcmp(character->job, "원소술사") == 0)
+            strcpy_s(character->job, sizeof(character->job), "아크메이지");
+        else if (strcmp(character->job, "흑마법사") == 0)
+            strcpy_s(character->job, sizeof(character->job), "네크로맨서");
+        else if (strcmp(character->job, "어쌔신") == 0)
+            strcpy_s(character->job, sizeof(character->job), "나이트메어");
+        else if (strcmp(character->job, "섀도우") == 0)
+            strcpy_s(character->job, sizeof(character->job), "닌자");
+    }
+
+    printf("\n전직 완료! 새로운 직업: %s\n", character->job);
+    PrintCharacterStat(character);
 }
