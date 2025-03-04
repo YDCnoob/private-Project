@@ -25,7 +25,7 @@ Update
 2. fightMop function changes
 3. Modification of combat-related functions and damage multiplier calculation code
 4. Add 2nd and 3rd job transfers
-
+5. if 10th dungeon clear player visit town for use inn, blacksmith and Equipment Enhancement
 ============================================================================================================================================================================
 Code
 ============================================================================================================================================================================
