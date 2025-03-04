@@ -1,31 +1,31 @@
 ============================================================================================================================================================================
 Fixes
 ============================================================================================================================================================================
-1st Fixes = Add function about GameLoop
-2nd Fixes = Add function about fightMop
-3rd Fixes = Modification of battle-related function calculation formulas and codes
-4th Fixes = Add function 2nd and 3rd job transfers
+1st Fixes = 게임 반복 관련 함수 추가
+2nd Fixes = 전투 관련 함수 추가
+3rd Fixes = 전투 관련 함수 및 데미지 계산식 수정
+4th Fixes = 2차, 3차 전직 기능 추가
 
 ============================================================================================================================================================================
 Sumarry
 ============================================================================================================================================================================
-1. Dungeon exploration game
-2. Users create a character by selecting the character's name and job.
-3. Characters level up when they collect a certain amount of experience.
-4. The character has 4 stats: strength, agility, intelligence, and luck, and 2 random stats increase when leveling up.
-5. If a character dies, both the character and progress are reset.
-6. The dungeon has total of 3 floors.
-7. A structure in which the monsters in the dungeon become stronger every time the user clears the dungeon.
-8. The damage multiplier changes based on the character’s stats.
-9. When a character reaches a certain level, 2nd and 3rd job advancement is possible.
+1. 던전 탐험 게임
+2. 사용자는 캐릭터의 이름과 직업을 선택하여 캐릭터를 생성한다
+3. 캐릭터는 일정량의 경험치를 모으면 레벨업이 가능하다
+4. 캐릭터는 힘,민첩,지능,행운 4개의 스탯을 가지고 있으며 레벨업 시 랜덤한 2개의 스탯이 증가한다
+5. 캐릭터가 사망 시 캐릭터와 게임의 진행상황이 초기화 된다
+6. 던전은 총 3층으로 구성되어있다
+7. 던전을 진행할수록 몬스터가 강해진다
+8. 데미지 배율은 캐릭터의 스탯을 기반으로 상승한다
+9. 캐릭터가 일정 레벨에 도달하면 2차, 3차 전직이 가능하다
 ============================================================================================================================================================================
 Update
 ============================================================================================================================================================================
-1. GameLoop function changes
-2. fightMop function changes
-3. Modification of combat-related functions and damage multiplier calculation code
-4. Add 2nd and 3rd job transfers
-5. if 10th dungeon clear player visit town for use inn, blacksmith and Equipment Enhancement
+1. 게임 반복 관련 함수 변경
+2. 전투 기능 관련 함수 변경
+3. 전투 관련 함수와 데미지 계산식 변경
+4. 2차, 3차 전직 기능 추가
+5. 10번째 던전 클리어시 캐릭터는 마을에서 회복, 장비 강화가 가능하다
 ============================================================================================================================================================================
 Code
 ============================================================================================================================================================================
