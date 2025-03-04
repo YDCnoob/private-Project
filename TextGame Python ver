@@ -13,3 +13,130 @@ Update
 ============================================================================================================================================================================
 Code
 ============================================================================================================================================================================
+import random
+import math
+
+class Character:
+    def __init__(self, name, job_choice):
+        self.name = name
+        self.job, self.strength, self.agility, self.intelligence, self.luck, self.max_hp = self.set_stats(job_choice)
+        self.level = 1
+        self.hp = self.max_hp
+        self.exp = 0
+
+    def set_stats(self, choice):
+        jobs = {
+            1: ("전사", 10, 5, 3, 2, 120),
+            2: ("궁수", 5, 10, 4, 3, 100),
+            3: ("마법사", 3, 4, 10, 3, 90),
+            4: ("도적", 4, 5, 4, 10, 100)
+        }
+        return jobs.get(choice, jobs[1])
+
+    def print_stats(self):
+        print(f"\n--- 캐릭터 상태 ---\n이름: {self.name}\n직업: {self.job}\n레벨: {self.level}\n체력: {self.hp}/{self.max_hp}\n"
+              f"힘: {self.strength}, 민첩: {self.agility}, 지능: {self.intelligence}, 행운: {self.luck}\n경험치: {self.exp}")
+
+
+class Mop:
+    def __init__(self, name, base_hp, base_dam, exp):
+        self.name = name
+        self.base_hp = base_hp
+        self.base_dam = base_dam
+        self.hp = base_hp
+        self.dam = base_dam
+        self.exp = exp
+
+    def reset(self, difficulty):
+        self.hp = self.base_hp + difficulty * 20
+        self.dam = self.base_dam + difficulty * 2
+
+
+def create_character():
+    name = input("이름을 입력하세요: ")
+    job_choice = int(input("\n1. 전사 2. 궁수 3. 마법사 4. 도적: "))
+    character = Character(name, job_choice)
+    print("\n캐릭터 생성 완료!")
+    character.print_stats()
+    return character
+
+
+def calculate_damage(character):
+    base_dam = 5
+    dam_mul = 1.0
+    dam_mul += math.sqrt(character.strength) * 1.2 + math.sqrt(character.agility) * 1.0
+    dam_mul += math.sqrt(character.intelligence) * 0.8 + math.sqrt(character.luck) * 1.4
+    return int(base_dam * dam_mul)
+
+
+def level_up(character):
+    if character.exp >= 100:
+        character.level += 1
+        character.exp -= 100
+        character.max_hp += 10
+        character.hp = character.max_hp
+        print(f"\n레벨업! {character.level} 레벨에 도달했습니다.")
+        stat_increase = random.sample(['strength', 'agility', 'intelligence', 'luck'], 2)
+        for stat in stat_increase:
+            setattr(character, stat, getattr(character, stat) + 2)
+        print("스탯이 상승했습니다!")
+        character.print_stats()
+
+
+def fight(character, mop):
+    for m in mop:
+        fight = input(f"{m.name}와 싸우겠습니까? (y/n): ").lower()
+        if fight == 'y':
+            print(f"{m.name}와 전투를 시작합니다!")
+            while m.hp > 0 and character.hp > 0:
+                m.hp -= calculate_damage(character)
+                print(f"{m.name}에게 {m.hp}의 데미지 입혔다! (남은 체력: {m.hp})")
+
+                if m.hp <= 0:
+                    print(f"{m.name} 처치!")
+                    character.exp += m.exp
+                    level_up(character)
+                    break
+
+                character.hp -= m.dam
+                print(f"{m.name}가 {character.name}에게 {m.dam}의 데미지를 입혔다! (남은 체력: {character.hp})")
+
+                if character.hp <= 0:
+                    print(f"{character.name} 사망! 게임 오버!")
+                    return False
+        else:
+            print(f"{m.name} 회피.")
+
+    return True
+
+
+def enter_dungeon(dun_lev):
+    return input(f"{dun_lev}층 던전에 입장하시겠습니까? (y/n): ").lower() == 'y'
+
+
+def game_loop(character, mop):
+    dun_lev = 1
+    while True:
+        if not enter_dungeon(dun_lev):
+            print("\n게임 종료.")
+            break
+
+        if not fight(character, mop):
+            break
+
+        next_dungeon = input(f"{dun_lev}층 클리어! 다음 층으로 이동하시겠습니까? (y/n): ").lower()
+        if next_dungeon == 'y':
+            dun_lev += 1
+            for m in mop:
+                m.reset(dun_lev)
+        else:
+            print("게임 종료.")
+            break
+
+
+if __name__ == "__main__":
+    random.seed()
+    character = create_character()
+    mop = [Mop("슬라임", 200, 5, 40), Mop("임프", 300, 10, 60), Mop("고블린", 400, 13, 100)]
+    game_loop(character, mop)
+
