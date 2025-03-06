@@ -181,7 +181,7 @@ void gameLoop(CHARACTER* character, MOP* mop)
 int enterDungeon(int dun_lev)
 {
     char enter;
-    printf("%d층 던전에 입장하시겠습니까? (y/n): ", dun_lev);
+    printf("슬리피 던전 %d층에 입장하시겠습니까? (y/n): ", dun_lev);
     scanf_s(" %c", &enter, 1);
     getchar();
 
