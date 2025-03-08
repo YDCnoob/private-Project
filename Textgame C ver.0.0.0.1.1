@@ -47,9 +47,9 @@ typedef struct
     int intelligence;
     int luck;
     int exp;
+    int gold;
 
 } CHARACTER;
-
 typedef struct
 {
     char name[50];
@@ -58,6 +58,8 @@ typedef struct
     int basDam;
     int dam;
     int exp;
+    int reward_gold;
+
 } MOP;
 
 void CreateCharacter(CHARACTER* character);
@@ -78,9 +80,9 @@ int main(void)
     CHARACTER character;
 
     MOP mop[3] =
-    { {"슬라임", 200, 200 , 5, 5, 40 },
-      {"임프", 300, 300, 10, 10, 60},
-      {"고블린", 400, 400, 13, 13, 100}
+    { {"슬라임", 200, 200 , 5, 5, 40, 10},
+      {"임프", 300, 300, 10, 10, 60, 20},
+      {"고블린", 400, 400, 13, 13, 100, 40}
     };
 
     CreateCharacter(&character);
@@ -149,6 +151,7 @@ void CreateCharacter(CHARACTER* character)
     character->level = 1;
     character->hp = character->max_hp;
     character->exp = 0;
+    character->gold = 500;
 
     printf("\n캐릭터 생성 완료!\n");
     PrintCharacterStat(character);
@@ -163,6 +166,8 @@ void PrintCharacterStat(CHARACTER* character)
     printf("힘: %d, 민첩: %d, 지능: %d, 행운: %d\n", character->strength, character->agility,
         character->intelligence, character->luck);
     printf("경험치: %d\n", character->exp);
+    printf("소지금: %d\n", character->gold);
+
 }
 void gameLoop(CHARACTER* character, MOP* mop)
 {
@@ -193,6 +198,7 @@ int enterDungeon(int dun_lev)
 }
 void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
 {
+
     int i = 0;
     for (i = 0;i < 3;i++)
     {
@@ -200,13 +206,15 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         int damTomop;
         int damTochr;
 
-        printf("%s가 나타났다! 싸우겠습니까? (y/n)", mop[i].name);
+        printf("%s가 나타났다! 싸우겠습니까? (y/n) ", mop[i].name);
         scanf_s(" %c", &fight, 1);
         getchar();
+        printf("\n");
 
         if (fight == 'y' || fight == 'Y')
         {
             printf("%s와 전투를 시작합니다!\n", mop[i].name);
+            printf("\n");
             while (mop[i].hp > 0 && character->hp > 0)
             {
                 damTomop = calculateDamage(character);
@@ -217,17 +225,19 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 {
                     printf("%s를 처치했다! \n", mop[i].name);
                     character->exp += mop[i].exp;
-                    printf("%d의 경험치를 획득했다!!", mop[i].exp);
+                    printf("%d의 경험치를 획득했다!\n", mop[i].exp);
+                    character->gold += mop[i].reward_gold;
+                    printf("%d의 골드를 획득했다!\n", mop[i].reward_gold);
                     PrintCharacterStat(character);
 
                     levelUp(character);
                     break;
                 }
-
+                printf("\n");
                 damTochr = mop[i].dam;
                 character->hp -= damTochr;
                 printf("%s가 %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
-                if (character->hp <= 0)
+                if (character->hp < 0)
                 {
                     printf("%s가 사망했습니다... 게임 오버!\n", character->name);
                     exit(0);
@@ -244,7 +254,7 @@ void nextDun(int* dun_lev, MOP* mop)
 {
     char next;
     resetMop(mop, *dun_lev);
-    printf("%d층 클리어!! 다음 층으로 이동하시겠습니까? (y/n)", *dun_lev);
+    printf("%d층 클리어!! 다음 층으로 이동하시겠습니까? (y/n) ", *dun_lev);
     scanf_s(" %c", &next, 1);
     getchar();
 
@@ -413,3 +423,6 @@ void promoteCharacter(CHARACTER* character)
     printf("\n전직 완료! 새로운 직업: %s\n", character->job);
     PrintCharacterStat(character);
 }
+
+
+
