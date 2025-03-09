@@ -1,6 +1,6 @@
 추가 사항
 1. 텍스트에 색상 삽입
-
+2. 마을 기능만 구현(여관, 대장간 구현 중)
 ==============================================================================================================================================================================================================================================================================
 
 #include <stdio.h>
@@ -44,6 +44,9 @@ typedef struct
     int luck;
     int exp;
     int gold;
+    int weapondmg;
+    int weaponup;
+
 
 } CHARACTER;
 typedef struct
@@ -69,6 +72,10 @@ int calculateDamage(CHARACTER* character);
 void levelUp(CHARACTER* character);
 void promoteCharacter(CHARACTER* character);
 void textcolor(int colorNum); // 콘솔 출력 문장 색상 입히기
+void enterTown(CHARACTER* character);
+void inn(CHARACTER* character);
+void blacksmith(CHARACTER* character);
+void upgrade_weapon(CHARACTER* character);
 
 int main(void)
 {
@@ -181,8 +188,10 @@ void PrintCharacterStat(CHARACTER* character)
 void gameLoop(CHARACTER* character, MOP* mop)
 {
     int dun_lev = 1;
+    
     while (1)
     {
+        enterTown(character);
         if (!enterDungeon(dun_lev))
         {
             printf("\n게임을 종료합니다.\n");
@@ -219,6 +228,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         printf("%s가 나타났다! 싸우겠습니까? (y/n) ", mop[i].name);
         scanf_s(" %c", &fight, 1);
         getchar();
+
         printf("\n");
 
         if (fight == 'y' || fight == 'Y')
@@ -243,6 +253,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                     levelUp(character);
                     break;
                 }
+
                 printf("\n");
                 damTochr = mop[i].dam;
                 character->hp -= damTochr;
@@ -432,4 +443,119 @@ void promoteCharacter(CHARACTER* character)
 
     printf("\n전직 완료! 새로운 직업: %s\n", character->job);
     PrintCharacterStat(character);
+}
+
+void enterTown(CHARACTER* character) 
+{
+    int choice;
+    int dun_lev;
+    printf("1. 여관 (체력 회복)\n");
+    printf("2. 대장간 (무기 강화)\n");
+    printf("3. 던전 탐험\n");
+    printf("4. 상태 보기\n");
+    printf("5. 게임 종료\n");
+    printf("선택: ");
+    scanf_s("%d", &choice);
+
+    switch (choice) {
+    case 1:
+        inn(character);
+        break;
+    case 2:
+        blacksmith(character);
+        break;
+    case 3:
+        enterDungeon(&dun_lev);
+        break;
+    case 4:
+        PrintCharacterStat(character);
+        break;
+    case 5:
+        printf("게임을 종료합니다.\n");
+        exit(0);
+    default:
+        printf("잘못된 선택입니다.\n");
+    }
+}
+void inn(CHARACTER* character) 
+{
+    int choice;
+    printf("1. 체력 회복\n");
+    printf("2. 시간 변경 (낮/밤)\n");
+    printf("선택: ");
+    scanf_s("%d", &choice);
+
+    if (choice == 1) 
+    {
+        character->hp = character->max_hp;
+        printf("체력이 전부 회복되었습니다.\n");
+    }
+    else if (choice == 2) 
+    {
+        printf("시간이 변경되었습니다. 밤이 되었습니다.\n");
+        // 밤에 몬스터 강해짐, 추가적인 게임 로직은 나중에 구현
+    }
+    else 
+    {
+        printf("잘못된 선택입니다.\n");
+    }
+}
+void blacksmith(CHARACTER* character)
+{
+    int choice;
+    printf("1. 무기 강화\n");
+    printf("2. 무기 상태 보기\n");
+    printf("선택: ");
+    scanf_s("%d", &choice);
+
+    if (choice == 1) 
+    {
+        upgrade_weapon(character);
+    }
+    else if (choice == 2) 
+    {
+        printf("현재 무기 데미지: %d\n", character->weapondmg);
+        printf("무기 강화 상태: +%d\n", character->weaponup);
+    }
+    else {
+        printf("잘못된 선택입니다.\n");
+    }
+}
+void upgrade_weapon(CHARACTER* character) 
+{
+    int upgrade_success = rand() % 100;  
+    if (character->weaponup < 20)
+    {
+        if (character->weaponup < 10)
+        {
+            
+            if (upgrade_success < 70) 
+            {
+                character->weaponup++;
+                character->weapondmg++;
+                printf("무기 강화 성공! 무기 데미지가 +1 증가했습니다.\n");
+            }
+            else 
+            {
+                printf("무기 강화 실패.\n");
+            }
+        }
+        else 
+        {
+            if (upgrade_success < 50 - (character->weapondmg - 10) * 5) 
+            {
+                character->weaponup++;
+                character->weapondmg += 2;
+                printf("무기 강화 성공! 무기 데미지가 +2 증가했습니다.\n");
+            }
+            else 
+            {
+                printf("무기 강화 실패.\n");
+            }
+        }
+    }
+    else 
+    {
+        printf("무기는 최대 강화 상태입니다.\n");
+    }
 }
