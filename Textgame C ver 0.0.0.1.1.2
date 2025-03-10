@@ -2,6 +2,7 @@
 1. 마을 입장 조건 변경( 게임 시작 직후, 던전 5*n층 클리어 시 마을 입장)
 2. 마을 함수 변경(던전 입장, 사용자 선택지 입력 관련)
 3. 던전 입장 문장 중복 문제 발생 -> 로딩 화면 마냥 이용하기로 했음
+4. 콘솔 출력 색상 변경( 계속 변경 예졍)
 ==============================================================================================================================================================================================================================================================================
 
 #include <stdio.h>
@@ -174,7 +175,7 @@ void textcolor(int colorNum)
 
 void PrintCharacterStat(CHARACTER* character)
 {
-    textcolor(11);
+    textcolor(YELLOW);
     printf("\n--- 캐릭터 상태 ---\n");
     printf("이름: %s\n", character->name);
     printf("직업: %s\n", character->job);
@@ -184,7 +185,7 @@ void PrintCharacterStat(CHARACTER* character)
         character->intelligence, character->luck);
     printf("경험치: %d\n", character->exp);
     printf("소지금: %d\n", character->gold);
-
+    textcolor(WHITE);
 }
 void gameLoop(CHARACTER* character, MOP* mop)
 {
@@ -207,7 +208,7 @@ int enterDungeon(int dun_lev)
 {
     char enter;
     textcolor(WHITE);
-    printf("슬리피 던전 다음층으로 내려가는중.... (Press Enter)\n");
+    printf("슬리피 던전 깊이 내려가는중.... (Press Enter)\n");
     getchar();
 
     return 1;
@@ -230,6 +231,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
 
         if (fight == 'y' || fight == 'Y')
         {
+            textcolor(WHITE);
             printf("%s와 전투를 시작합니다!\n", mop[i].name);
             printf("\n");
             while (mop[i].hp > 0 && character->hp > 0)
@@ -245,6 +247,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                     printf("%d의 경험치를 획득했다!\n", mop[i].exp);
                     character->gold += mop[i].reward_gold;
                     printf("%d의 골드를 획득했다!\n", mop[i].reward_gold);
+                    textcolor(YELLOW);
                     PrintCharacterStat(character);
 
                     levelUp(character);
@@ -569,5 +572,6 @@ void upgrade_weapon(CHARACTER* character)
         printf("무기는 최대 강화 상태입니다.\n");
     }
 }
+
 
 
