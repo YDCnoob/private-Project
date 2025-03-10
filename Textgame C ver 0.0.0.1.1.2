@@ -1,6 +1,7 @@
 변경사항
 1. 마을 입장 조건 변경( 게임 시작 직후, 던전 5*n층 클리어 시 마을 입장)
 2. 마을 함수 변경(던전 입장, 사용자 선택지 입력 관련)
+3. 던전 입장 문장 중복 문제 발생 -> 로딩 화면 마냥 이용하기로 했음
 ==============================================================================================================================================================================================================================================================================
 
 #include <stdio.h>
@@ -8,26 +9,26 @@
 #include <time.h>
 #include <string.h>
 #include <math.h>
-#include <Windows.h>
+#include <windows.h>
 
 enum ColorType 
 {
-    BLACK,  	//0
-    darkBLUE,	//1
-    DarkGreen,	//2
+    BLACK,  	    //0
+    darkBLUE,	    //1
+    DarkGreen,	    //2
     darkSkyBlue,    //3
-    DarkRed,  	//4
-    DarkPurple,	//5
-    DarkYellow,	//6
-    GRAY,		//7
-    DarkGray,	//8
-    BLUE,		//9
-    GREEN,		//10
-    SkyBlue,	//11
-    RED,		//12
-    PURPLE,		//13
-    YELLOW,		//14
-    WHITE		//15
+    DarkRed,  	    //4
+    DarkPurple,	    //5
+    DarkYellow,	    //6
+    GRAY,		    //7
+    DarkGray,	    //8
+    BLUE,		    //9
+    GREEN,		    //10
+    SkyBlue,	    //11
+    RED,		    //12
+    PURPLE,		    //13
+    YELLOW,		    //14
+    WHITE		    //15
 
 } COLOR;
 
@@ -46,7 +47,6 @@ typedef struct
     int gold;
     int weapondmg;
     int weaponup;
-
 
 } CHARACTER;
 typedef struct
@@ -207,14 +207,9 @@ int enterDungeon(int dun_lev)
 {
     char enter;
     textcolor(WHITE);
-    printf("슬리피 던전 %d층에 입장하시겠습니까? (y/n): ", dun_lev);
-    scanf_s(" %c", &enter, 1);
+    printf("슬리피 던전 다음층으로 내려가는중.... (Press Enter)\n");
     getchar();
 
-    if (enter == 'n' || enter == 'N')
-    {
-        return 0;
-    }
     return 1;
 }
 void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
@@ -451,8 +446,8 @@ void promoteCharacter(CHARACTER* character)
 void enterTown(CHARACTER* character)
 {
     int choice;
-    int* dun_lev;
-
+    int dun_lev = 0;
+    
     while (1)
     {
         printf("1. 여관 (체력 회복)\n");
@@ -477,7 +472,7 @@ void enterTown(CHARACTER* character)
             blacksmith(character);
             break;
         case 3:
-            enterDungeon(&dun_lev);
+            enterDungeon(dun_lev);
             return;
         case 4:
             PrintCharacterStat(character);
@@ -574,3 +569,5 @@ void upgrade_weapon(CHARACTER* character)
         printf("무기는 최대 강화 상태입니다.\n");
     }
 }
+
+
