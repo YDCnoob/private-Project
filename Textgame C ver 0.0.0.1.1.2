@@ -551,11 +551,26 @@ void upgrade_weapon(CHARACTER* character)
             {
                 character->weaponup++;
                 character->weapondmg++;
+                character->gold -= 50;
                 printf("무기 강화 성공! 무기 데미지가 +1 증가했습니다.\n");
+                printf("\n");
+                if (character->gold <= 0)
+                {
+                    printf("골드가 부족합니다.");
+                }
+                printf("\n");
+                    
             }
             else
             {
+                character->gold -= 50;
                 printf("무기 강화 실패.\n");
+                printf("\n");
+                if (character->gold <= 0)
+                {
+                    printf("골드가 부족합니다.");
+                }
+                printf("\n");
             }
         }
         else
@@ -577,6 +592,8 @@ void upgrade_weapon(CHARACTER* character)
         printf("무기는 최대 강화 상태입니다.\n");
     }
 }
+
+
 
 
 
