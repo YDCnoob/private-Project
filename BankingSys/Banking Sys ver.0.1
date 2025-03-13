@@ -29,26 +29,24 @@ int main(void)
 		cout << endl;
 		switch (choice)
 		{
-			switch (choice)
-			{
-			case 1:
-				MakeAccount();
-				break;
-			case 2:
-				DepositMoney();
-				break;
-			case 3:
-				WithdrawMoney();
-				break;
-			case 4:
-				ShowAllAccInfo();
-				break;
-			case 5:
-				exit(1);
-			defalult:
-				cout << "잘못된 입력입니다 다시 입력하세요" << endl;
-			}
+		case 1:
+			MakeAccount();
+			break;
+		case 2:
+			DepositMoney();
+			break;
+		case 3:
+			WithdrawMoney();
+			break;
+		case 4:
+			ShowAllAccInfo();
+			break;
+		case 5:
+			exit(1);
+		default:
+			cout << "잘못된 입력입니다 다시 입력하세요" << endl;
 		}
+
 	}
 	return 0;
 }
@@ -60,40 +58,81 @@ void showMenu(void)
 	cout << "3. 출금" << endl;
 	cout << "4. 잔액 조회" << endl;
 	cout << "5. 프로그램 종료" << endl;
-	cout << "=======menu=======" << endl;	
+	cout << "=======menu=======" << endl;
 }
 void MakeAccount(void)
 {
-	int i = 0;
+	int id;
+	char name[20];
+	int balance;
+
 	cout << "===============MakeAccount===============" << endl;
 	cout << "customer's Account number: ";
-	cin >> acc[i].accID;
-	cout << "customer's Name: ";
-	cin >> acc[i].cusName;
-	cout << "customer's Account balance: ";
-	cin >> acc[i].balance;
+	cin >> id;
+
+	for (int i = 0; i < 2; i++) 
+	{
+		if (acc[i].accID == 0) 
+		{ 
+			acc[i].accID = id;
+			cout << "customer's Name: ";
+			cin >> name;
+			strcpy_s(acc[i].cusName, name);
+			cout << "customer's Account balance: ";
+			cin >> balance;
+			acc[i].balance = balance;
+
+			cout << "=========complete Make Account ===========" << endl;
+			return;
+		}
+	}
+
+	cout << "더 이상 계좌를 생성할 수 없습니다." << endl;
 
 	cout << "=========complete Make Account ===========" << endl;
 }
 void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 {
-	int i = 0;
-	int deposit = 0;
+	int id, amount;
 	cout << "계좌 번호: ";
-	cin >> acc[i].accID;
+	cin >> id;
 	cout << "입금액: ";
-	cin >> acc[i].balance;
-	deposit += acc[i].balance;
+	cin >> amount;
+
+	for (int i = 0; i < 2; i++) 
+	{
+		if (acc[i].accID == id) 
+		{
+			acc[i].balance += amount;
+			cout << "입금 완료! 현재 잔액: " << acc[i].balance << endl;
+			return;
+		}
+	}
+	cout << "존재하지 않는 계좌입니다." << endl;
 }
 void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 {
-	int i = 0;
-	int withdraw = 0;
+	int id, amount;
 	cout << "계좌 번호: ";
-	cin >> acc[i].accID;
+	cin >> id;
 	cout << "출금액: ";
-	cin >> acc[i].balance;
-	withdraw -= acc[i].balance;
+	cin >> amount;
+
+	for (int i = 0; i < 2; i++) 
+	{
+		if (acc[i].accID == id) 
+		{
+			if (acc[i].balance < amount) 
+			{
+				cout << "잔액 부족!" << endl;
+				return;
+			}
+			acc[i].balance -= amount;
+			cout << "출금 완료! 현재 잔액: " << acc[i].balance << endl;
+			return;
+		}
+	}
+	cout << "존재하지 않는 계좌입니다." << endl;
 }
 void ShowAllAccInfo(void)
 {
@@ -104,5 +143,6 @@ void ShowAllAccInfo(void)
 		cout << "계좌번호: " << acc[i].accID << endl;
 		cout << "계좌잔액: " << acc[i].balance << endl;
 	}
-	
+
 }
+
