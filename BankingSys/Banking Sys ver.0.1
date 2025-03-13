@@ -55,13 +55,13 @@ int main(void)
 }
 void showMenu(void)
 {
-	cout << "=======menu=======" << endl;
+	cout << "=======[menu]=======" << endl;
 	cout << "1. 계좌 개설" << endl;
 	cout << "2. 입금" << endl;
 	cout << "3. 출금" << endl;
 	cout << "4. 잔액 조회" << endl;
 	cout << "5. 프로그램 종료" << endl;
-	cout << "=======menu=======" << endl;
+	cout << "=======[menu]=======" << endl;
 }
 void MakeAccount(void)
 {
@@ -75,7 +75,7 @@ void MakeAccount(void)
 		{
 			continue;
 		}
-		cout << "=============== MakeAccount ===============" << endl;
+		cout << "=============== [MakeAccount] ===============" << endl;
 		cout << "customer's Account number: ";
 		cin >> id;
 		acc[i].accID = id;
@@ -87,11 +87,15 @@ void MakeAccount(void)
 		cout << "customer's Account balance: ";
 		cin >> balance;
 		acc[i].balance = balance;
+
+		cout << "Create Account Success." << endl;
 	}
-	cout << "========= Complete Make Account ===========" << endl;
+	cout << "=============== [MakeAccount] ===============" << endl;
+	cout << endl;
 }
 void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 {
+	cout << "=============[Deposit]============" << endl;
 	int id, deposit;
 	cout << "계좌 번호: ";
 	cin >> id;
@@ -104,6 +108,7 @@ void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 		{
 			acc[i].balance += deposit;
 			cout << "입금 완료! 현재 잔액: " << acc[i].balance << endl;
+			cout << "=============[Deposit]============" << endl;
 			return;
 		}
 	}
@@ -112,6 +117,7 @@ void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 {
 	int id, withdraw;
+	cout << "=============[withdraw]============" << endl;
 	cout << "계좌 번호: ";
 	cin >> id;
 	cout << "출금액: ";
@@ -128,10 +134,12 @@ void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 			}
 			acc[i].balance -= withdraw;
 			cout << "출금 완료! 현재 잔액: " << acc[i].balance << endl;
+			cout << "=============[withdraw]============" << endl;
 			return;
 		}
 	}
 	cout << "존재하지 않는 계좌입니다." << endl;
+	
 }
 void ShowAllAccInfo(void)
 {
@@ -144,3 +152,5 @@ void ShowAllAccInfo(void)
 		cout << endl;
 	}
 }
+
+
