@@ -10,6 +10,7 @@ typedef struct
 }BankAccount;
 
 BankAccount acc[2] = { 0 };
+int len = sizeof(acc) / sizeof(acc[0]);
 
 void showMenu(void);
 void MakeAccount(void);
@@ -66,7 +67,7 @@ void MakeAccount(void)
 	char name[20];
 	int balance;
 
-	for (int i = 0; i < 2; i++) 
+	for (int i = 0; i < len; i++) 
 	{
 		if (acc[i].accID != 0) 
 		{
@@ -95,7 +96,7 @@ void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 	cout << "입금액: ";
 	cin >> deposit;
 
-	for (int i = 0; i < 2; i++) 
+	for (int i = 0; i < len; i++) 
 	{
 		if (acc[i].accID == id) 
 		{
@@ -114,7 +115,7 @@ void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 	cout << "출금액: ";
 	cin >> withdraw;
 
-	for (int i = 0; i < 2; i++) 
+	for (int i = 0; i < len; i++) 
 	{
 		if (acc[i].accID == id) 
 		{
@@ -133,7 +134,7 @@ void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 void ShowAllAccInfo(void)
 {
 	int i = 0;
-	for (i = 0; i < 2;i++)
+	for (i = 0; i < len;i++)
 	{
 		cout << "고객명: " << acc[i].cusName << endl;
 		cout << "계좌번호: " << acc[i].accID << endl;
@@ -141,5 +142,4 @@ void ShowAllAccInfo(void)
 	}
 
 }
-
 
