@@ -62,48 +62,45 @@ void showMenu(void)
 }
 void MakeAccount(void)
 {
+
 	int id;
 	char name[20];
 	int balance;
 
-	cout << "===============MakeAccount===============" << endl;
-	cout << "customer's Account number: ";
-	cin >> id;
-
 	for (int i = 0; i < 2; i++) 
 	{
-		if (acc[i].accID == 0) 
-		{ 
-			acc[i].accID = id;
-			cout << "customer's Name: ";
-			cin >> name;
-			strcpy_s(acc[i].cusName, name);
-			cout << "customer's Account balance: ";
-			cin >> balance;
-			acc[i].balance = balance;
-
-			cout << "=========complete Make Account ===========" << endl;
-			return;
+		if (acc[i].accID != 0) 
+		{
+			continue; 
 		}
+		cout << "=============== MakeAccount ===============" << endl;
+		cout << "customer's Account number: ";
+		cin >> id;
+
+		acc[i].accID = id;
+		cout << "customer's Name: ";
+		cin >> name;
+		strcpy_s(acc[i].cusName, name);
+		cout << "customer's Account balance: ";
+		cin >> balance;
+		acc[i].balance = balance;
+
+		cout << "========= Complete Make Account ===========" << endl;
 	}
-
-	cout << "더 이상 계좌를 생성할 수 없습니다." << endl;
-
-	cout << "=========complete Make Account ===========" << endl;
 }
 void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 {
-	int id, amount;
+	int id, deposit;
 	cout << "계좌 번호: ";
 	cin >> id;
 	cout << "입금액: ";
-	cin >> amount;
+	cin >> deposit;
 
 	for (int i = 0; i < 2; i++) 
 	{
 		if (acc[i].accID == id) 
 		{
-			acc[i].balance += amount;
+			acc[i].balance += deposit;
 			cout << "입금 완료! 현재 잔액: " << acc[i].balance << endl;
 			return;
 		}
@@ -112,22 +109,22 @@ void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 }
 void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 {
-	int id, amount;
+	int id, withdraw;
 	cout << "계좌 번호: ";
 	cin >> id;
 	cout << "출금액: ";
-	cin >> amount;
+	cin >> withdraw;
 
 	for (int i = 0; i < 2; i++) 
 	{
 		if (acc[i].accID == id) 
 		{
-			if (acc[i].balance < amount) 
+			if (acc[i].balance < withdraw)
 			{
 				cout << "잔액 부족!" << endl;
 				return;
 			}
-			acc[i].balance -= amount;
+			acc[i].balance -= withdraw;
 			cout << "출금 완료! 현재 잔액: " << acc[i].balance << endl;
 			return;
 		}
@@ -145,4 +142,5 @@ void ShowAllAccInfo(void)
 	}
 
 }
+
 
