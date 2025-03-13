@@ -55,13 +55,15 @@ int main(void)
 }
 void showMenu(void)
 {
-	cout << "=======[menu]=======" << endl;
+	cout << "AA은행 온라인 서비스를 이용해주셔서 감사합니다." << endl;
+	cout << endl;
+	cout << "=======[업무]=======" << endl;
 	cout << "1. 계좌 개설" << endl;
 	cout << "2. 입금" << endl;
 	cout << "3. 출금" << endl;
 	cout << "4. 잔액 조회" << endl;
 	cout << "5. 프로그램 종료" << endl;
-	cout << "=======[menu]=======" << endl;
+	cout << "=======[업무]=======" << endl;
 }
 void MakeAccount(void)
 {
@@ -75,27 +77,27 @@ void MakeAccount(void)
 		{
 			continue;
 		}
-		cout << "=============== [MakeAccount] ===============" << endl;
-		cout << "customer's Account number: ";
+		cout << "=============== [계좌 개설] ===============" << endl;
+		cout << "계좌 번호: ";
 		cin >> id;
 		acc[i].accID = id;
 
-		cout << "customer's Name: ";
+		cout << "예금주: ";
 		cin >> name;
 		strcpy_s(acc[i].cusName, name);
 
-		cout << "customer's Account balance: ";
+		cout << "예금액: ";
 		cin >> balance;
 		acc[i].balance = balance;
 
-		cout << "Create Account Success." << endl;
+		cout << "계좌 개설 완료." << endl;
 	}
-	cout << "=============== [MakeAccount] ===============" << endl;
+	cout << "=============== [계좌 개설] ===============" << endl;
 	cout << endl;
 }
 void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 {
-	cout << "=============[Deposit]============" << endl;
+	cout << "=============[입금]============" << endl;
 	int id, deposit;
 	cout << "계좌 번호: ";
 	cin >> id;
@@ -108,7 +110,7 @@ void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 		{
 			acc[i].balance += deposit;
 			cout << "입금 완료! 현재 잔액: " << acc[i].balance << endl;
-			cout << "=============[Deposit]============" << endl;
+			cout << "=============[입금]============" << endl;
 			return;
 		}
 	}
@@ -117,7 +119,7 @@ void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 {
 	int id, withdraw;
-	cout << "=============[withdraw]============" << endl;
+	cout << "=============[출금]============" << endl;
 	cout << "계좌 번호: ";
 	cin >> id;
 	cout << "출금액: ";
@@ -134,7 +136,7 @@ void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 			}
 			acc[i].balance -= withdraw;
 			cout << "출금 완료! 현재 잔액: " << acc[i].balance << endl;
-			cout << "=============[withdraw]============" << endl;
+			cout << "=============[출금]============" << endl;
 			return;
 		}
 	}
@@ -152,5 +154,4 @@ void ShowAllAccInfo(void)
 		cout << endl;
 	}
 }
-
 
