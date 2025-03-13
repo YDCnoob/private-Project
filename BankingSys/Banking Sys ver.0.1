@@ -1,6 +1,8 @@
 #include <iostream>
 
-using namespace std;
+using std::cout;
+using std::cin;
+using std::endl;
 
 typedef struct
 {
@@ -67,11 +69,11 @@ void MakeAccount(void)
 	char name[20];
 	int balance;
 
-	for (int i = 0; i < len; i++) 
+	for (int i = 0; i < len; i++)
 	{
-		if (acc[i].accID != 0) 
+		if (acc[i].accID != 0)
 		{
-			continue; 
+			continue;
 		}
 		cout << "=============== MakeAccount ===============" << endl;
 		cout << "customer's Account number: ";
@@ -96,9 +98,9 @@ void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 	cout << "입금액: ";
 	cin >> deposit;
 
-	for (int i = 0; i < len; i++) 
+	for (int i = 0; i < len; i++)
 	{
-		if (acc[i].accID == id) 
+		if (acc[i].accID == id)
 		{
 			acc[i].balance += deposit;
 			cout << "입금 완료! 현재 잔액: " << acc[i].balance << endl;
@@ -115,9 +117,9 @@ void WithdrawMoney(void) // 소지금보다 많이 빠지면 잔액부족 안내
 	cout << "출금액: ";
 	cin >> withdraw;
 
-	for (int i = 0; i < len; i++) 
+	for (int i = 0; i < len; i++)
 	{
-		if (acc[i].accID == id) 
+		if (acc[i].accID == id)
 		{
 			if (acc[i].balance < withdraw)
 			{
@@ -142,4 +144,3 @@ void ShowAllAccInfo(void)
 		cout << endl;
 	}
 }
-
