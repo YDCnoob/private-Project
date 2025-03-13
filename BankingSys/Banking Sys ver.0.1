@@ -62,7 +62,6 @@ void showMenu(void)
 }
 void MakeAccount(void)
 {
-
 	int id;
 	char name[20];
 	int balance;
@@ -76,17 +75,17 @@ void MakeAccount(void)
 		cout << "=============== MakeAccount ===============" << endl;
 		cout << "customer's Account number: ";
 		cin >> id;
-
 		acc[i].accID = id;
+
 		cout << "customer's Name: ";
 		cin >> name;
 		strcpy_s(acc[i].cusName, name);
+
 		cout << "customer's Account balance: ";
 		cin >> balance;
 		acc[i].balance = balance;
-
-		cout << "========= Complete Make Account ===========" << endl;
 	}
+	cout << "========= Complete Make Account ===========" << endl;
 }
 void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 {
