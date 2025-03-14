@@ -57,12 +57,12 @@ int main(void)
     };
 
     CreateCharacter(&character);
-    gameLoop(&character, &mop);
+    gameLoop(&character, mop);
     return 0;
 }
 void CreateCharacter(CHARACTER* character)
 {
-    cout << "이름을 입력하세요: ";
+    cout << "이름을 입력하세요: " << endl; 
     cin >> (*character).name;
     cout << endl;
     cout << "--- 직업 선택 ---" << endl;
@@ -131,10 +131,10 @@ void PrintCharacterStat(CHARACTER* character)
     cout << "--- 캐릭터 상태 ---" << endl;;
     cout << "이름: " << character->name << endl;
     cout << "직업: " << character->job << endl;
-    cout << "레벨: " << character->level;
-    cout << "체력: " << character->hp << "/ " << character->max_hp;
-    cout << "힘: " << character->strength << "민첩: " << character->agility << "지능 :" << character->intelligence << "행운 : " << character->luck << endl; 
-    cout << "경험치: " << character->exp;
+    cout << "레벨: " << character->level << endl;
+    cout << "체력: " << character->hp << "/ " << character->max_hp << endl;
+    cout << "힘: " << character->strength <<" " << "민첩: " << character->agility << "지능 :" << character->intelligence << " " << "행운 : " << character->luck << endl;
+    cout << "경험치: " << character->exp << endl;
 }
 void gameLoop(CHARACTER* character, MOP* mop)
 {
@@ -385,3 +385,4 @@ void promoteCharacter(CHARACTER* character)
     printf("\n전직 완료! 새로운 직업: %s\n", character->job);
     PrintCharacterStat(character);
 }
+
