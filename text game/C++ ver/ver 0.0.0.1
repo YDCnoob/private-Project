@@ -62,7 +62,7 @@ int main(void)
 }
 void CreateCharacter(CHARACTER* character)
 {
-    cout << "이름을 입력하세요: " << endl; 
+    cout << "이름을 입력하세요: "; 
     cin >> (*character).name;
     cout << endl;
     cout << "--- 직업 선택 ---" << endl;
@@ -153,8 +153,8 @@ void gameLoop(CHARACTER* character, MOP* mop)
 int enterDungeon(int dun_lev)
 {
     char enter;
-    printf("슬리피 던전 %d층에 입장하시겠습니까? (y/n): ", dun_lev);
-    scanf_s(" %c", &enter, 1);
+    cout << "슬리피 던전 %d층에 입장하시겠습니까? (y/n): " << dun_lev;
+    cin >> enter;
     getchar();
 
     if (enter == 'n' || enter == 'N')
@@ -172,24 +172,24 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         int damTomop;
         int damTochr;
 
-        printf("%s가 나타났다! 싸우겠습니까? (y/n)", mop[i].name);
-        scanf_s(" %c", &fight, 1);
+        cout << "%s가 나타났다! 싸우겠습니까? (y/n)" << mop[i].name;
+        cin >> fight;
         getchar();
 
         if (fight == 'y' || fight == 'Y')
         {
-            printf("%s와 전투를 시작합니다!\n", mop[i].name);
+            cout << "%s와 전투를 시작합니다!" << mop[i].name << endl;
             while (mop[i].hp > 0 && character->hp > 0)
             {
                 damTomop = calculateDamage(character);
                 mop[i].hp -= damTomop;
-                printf("%s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, damTomop, mop[i].hp);
+                cout << " " << mop[i].name << "에게" << " " << damTomop << "의 데미지를 입혔다!" << "남은 체력 : " << mop[i].hp << endl;
 
                 if (mop[i].hp <= 0)
                 {
-                    printf("%s를 처치했다! \n", mop[i].name);
+                    cout << " "<< mop[i].name << "를 처치했다!";
                     character->exp += mop[i].exp;
-                    printf("%d의 경험치를 획득했다!!", mop[i].exp);
+                    cout << " " << mop[i].exp << "의 경험치를 획득했다!";
                     PrintCharacterStat(character);
 
                     levelUp(character);
@@ -198,17 +198,17 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
 
                 damTochr = mop[i].dam;
                 character->hp -= damTochr;
-                printf("%s가 %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
+                cout << " " << mop[i].name << "가" << character->name << "에게" << damTochr << "의 데미지를 입혔다!" << "남은 체력 :" << character->hp << endl;
                 if (character->hp <= 0)
                 {
-                    printf("%s가 사망했습니다... 게임 오버!\n", character->name);
+                    cout << " " << character->name << "가 사망했습니다... 게임오버!" << endl;
                     exit(0);
                 }
             }
         }
         else
         {
-            printf("%s(을)를 회피했습니다.. \n", mop[i].name);
+            cout << " " << mop[i].name << "을 회피했습니다.." << endl;
         }
     }
 }
