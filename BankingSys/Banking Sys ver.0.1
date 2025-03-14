@@ -1,15 +1,18 @@
 #include <iostream>
 
-using std::cout;
-using std::cin;
-using std::endl;
+using namespace std;
+const int NAME_LEN = 20;
 
 typedef struct
 {
-	int accID;
-	char cusName[20];
-	int balance;
-}BankAccount;
+	int accID;		      // 계좌번호
+	char cusName[NAME_LEN];       // 예금주명
+	int balance;	       	      // 계좌잔액
+}Account;
+
+enum label {MAKE=1, DEPOSIT, WITHDRAW, INQUIRE, EXIT};
+Account acc[100] = { 0 }; //  Account 저장을 위한 배열
+int accNum = 0;			  // 저장된 Account 수
 
 BankAccount acc[2] = { 0 };
 int len = sizeof(acc) / sizeof(acc[0]);
