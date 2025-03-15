@@ -1,0 +1,609 @@
+추가 사항
+1. 낮/밤 전환 시스템 추가
+==================================================================================
+변경 사항
+1. 낮/밤 시스템의 추가에 따른 gameLoop, inn, nextdun, resetMop, fightMop 함수 수정
+==================================================================================
+코드
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <math.h>
+#include <windows.h>
+
+enum ColorType
+{
+    BLACK,  	    //0
+    darkBLUE,	    //1
+    DarkGreen,	    //2
+    darkSkyBlue,    //3
+    DarkRed,  	    //4
+    DarkPurple,	    //5
+    DarkYellow,	    //6
+    GRAY,		    //7
+    DarkGray,	    //8
+    BLUE,		    //9
+    GREEN,		    //10
+    SkyBlue,	    //11
+    RED,		    //12
+    PURPLE,		    //13
+    YELLOW,		    //14
+    WHITE		    //15
+
+} COLOR;
+
+typedef struct
+{
+    char name[50];
+    char job[20];
+    int level;
+    int hp;
+    int max_hp;
+    int strength;
+    int agility;
+    int intelligence;
+    int luck;
+    int exp;
+    int gold;
+    int weapondmg;
+    int weaponup;
+    int isNight; // 낮(0) / 밤(1) 상태
+
+} CHARACTER;
+typedef struct
+{
+    char name[50];
+    int base_hp;
+    int hp;
+    int basDam;
+    int dam;
+    int exp;
+    int reward_gold;
+
+} MOP;
+
+void CreateCharacter(CHARACTER* character);
+void PrintCharacterStat(CHARACTER* character);
+void gameLoop(CHARACTER* character, MOP* mop);
+int enterDungeon(int dun_lev);
+void fightmop(CHARACTER* character, MOP* mop, int dun_lev);
+void nextDun(int* dun_lev, MOP* mop, CHARACTER* character);
+void resetMop(MOP* mop, int difficulty, int isNight);
+int calculateDamage(CHARACTER* character);
+void levelUp(CHARACTER* character);
+void promoteCharacter(CHARACTER* character);
+void textcolor(int colorNum); // 콘솔 출력 문장 색상 입히기
+void enterTown(CHARACTER* character);
+void inn(CHARACTER* character);
+void blacksmith(CHARACTER* character);
+void upgrade_weapon(CHARACTER* character);
+
+int main(void)
+{
+    srand((int)time(NULL));
+
+    CHARACTER character;
+
+    MOP mop[3] =
+    { {"슬라임", 200, 200 , 5, 5, 40, 10},
+      {"임프", 300, 300, 10, 10, 60, 20},
+      {"고블린", 400, 400, 13, 13, 100, 40}
+    };
+
+    CreateCharacter(&character);
+    enterTown(&character);
+    gameLoop(&character, &mop);
+    return 0;
+}
+void CreateCharacter(CHARACTER* character)
+{
+    textcolor(WHITE);
+    printf("이름을 입력하세요: ");
+    scanf_s("%s", (*character).name, (unsigned int)sizeof((*character).name));
+
+    printf("\n--- 직업 선택 ---\n");
+    textcolor(RED);
+    printf("1. 전사(Warrior): 힘과 체력이 높음\n");
+    textcolor(GREEN);
+    printf("2. 궁수(Archer): 민첩하고 회피력이 높음\n");
+    textcolor(BLUE);
+    printf("3. 마법사(Mage): 지능이 높고 마법 공격 강함\n");
+    textcolor(YELLOW);
+    printf("4. 도적(Rogue): 행운이 높아 치명타 확률 높음\n");
+    textcolor(WHITE);
+    printf("직업을 선택하세요 (1-4): ");
+
+    int choice;
+    scanf_s("%d", &choice);
+
+    switch (choice)
+    {
+    case 1:
+        strcpy_s(character->job, sizeof(character->job), "전사");
+        character->strength = 10;
+        character->agility = 5;
+        character->intelligence = 3;
+        character->luck = 2;
+        character->max_hp = 120;
+        break;
+    case 2:
+        strcpy_s(character->job, sizeof(character->job), "궁수");
+        character->strength = 5;
+        character->agility = 10;
+        character->intelligence = 4;
+        character->luck = 3;
+        character->max_hp = 100;
+        break;
+    case 3:
+        strcpy_s(character->job, sizeof(character->job), "마법사");
+        character->strength = 3;
+        character->agility = 4;
+        character->intelligence = 10;
+        character->luck = 3;
+        character->max_hp = 90;
+        break;
+    case 4:
+        strcpy_s(character->job, sizeof(character->job), "도적");
+        character->strength = 4;
+        character->agility = 5;
+        character->intelligence = 4;
+        character->luck = 10;
+        character->max_hp = 100;
+        break;
+    default:
+        printf("잘못된 선택입니다. 전사로 설정합니다.\n");
+        strcpy_s(character->job, sizeof(character->job), "전사");
+        character->strength = 10;
+        character->agility = 5;
+        character->intelligence = 3;
+        character->luck = 2;
+        character->max_hp = 120;
+    }
+
+    character->level = 1;
+    character->hp = character->max_hp;
+    character->exp = 0;
+    character->gold = 500;
+
+    printf("\n캐릭터 생성 완료!\n");
+    PrintCharacterStat(character);
+}
+void textcolor(int colorNum)
+{
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorNum);
+}
+
+void PrintCharacterStat(CHARACTER* character)
+{
+    textcolor(YELLOW);
+    printf("\n--- 캐릭터 상태 ---\n");
+    printf("이름: %s\n", character->name);
+    printf("직업: %s\n", character->job);
+    printf("레벨: %d\n", character->level);
+    printf("체력: %d/%d\n", character->hp, character->max_hp);
+    printf("힘: %d, 민첩: %d, 지능: %d, 행운: %d\n", character->strength, character->agility,
+        character->intelligence, character->luck);
+    printf("경험치: %d\n", character->exp);
+    printf("소지금: %d\n", character->gold);
+    textcolor(WHITE);
+}
+void gameLoop(CHARACTER* character, MOP* mop)
+{
+    int dun_lev = 1;
+
+    while (1)
+    {
+        if (dun_lev % 5 == 0)
+            enterTown(character);
+        if (!enterDungeon(dun_lev))
+        {
+            printf("\n게임을 종료합니다.\n");
+            break;
+        }
+        fightmop(character, mop, dun_lev);
+        nextDun(&dun_lev, mop, character);
+    }
+}
+int enterDungeon(int dun_lev)
+{
+    char enter;
+    textcolor(WHITE);
+    printf("슬리피 던전 깊이 내려가는중.... (Press Enter)\n");
+    getchar();
+
+    return 1;
+}
+void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
+{
+
+    int i = 0;
+    for (i = 0;i < 3;i++)
+    {
+        char fight;
+        int damTomop;
+        int damTochr;
+
+        printf("%s가 나타났다! 싸우겠습니까? (y/n) ", mop[i].name);
+        scanf_s(" %c", &fight, 1);
+        getchar();
+
+        printf("\n");
+
+        if (fight == 'y' || fight == 'Y')
+        {
+            textcolor(WHITE);
+            printf("%s와 전투를 시작합니다!\n", mop[i].name);
+            printf("\n");
+            while (mop[i].hp > 0 && character->hp > 0)
+            {
+                damTomop = calculateDamage(character);
+                mop[i].hp -= damTomop;
+                printf("%s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, damTomop, mop[i].hp);
+                printf("\n");
+                if (mop[i].hp <= 0)
+                {
+                    printf("%s를 처치했다! \n", mop[i].name);
+                    character->exp += mop[i].exp;
+                    printf("\n");
+                    printf("%d의 경험치를 획득했다!\n", mop[i].exp);
+                    character->gold += mop[i].reward_gold;
+                    printf("\n");
+                    printf("%d의 골드를 획득했다!\n", mop[i].reward_gold);
+                    printf("\n");
+                    textcolor(YELLOW);
+                    PrintCharacterStat(character);
+
+                    levelUp(character);
+                    break;
+                }
+
+                printf("\n");
+                damTochr = mop[i].dam;
+                character->hp -= damTochr;
+                printf("%s가 %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
+                printf("\n");
+                if (character->hp < 0)
+                {
+                    printf("%s가 사망했습니다... 게임 오버!\n", character->name);
+                    exit(0);
+                }
+            }
+        }
+        else
+        {
+            if (fight == 'n' || fight == 'N')
+                printf("%s(을)를 회피했습니다.. \n", mop[i].name);
+        }
+    }
+}
+void nextDun(int* dun_lev, MOP* mop, CHARACTER* character)
+{
+    char next;
+    resetMop(mop, *dun_lev, character->isNight);
+    printf("%d층 클리어!! 다음 층으로 이동하시겠습니까? (y/n) ", *dun_lev);
+
+    scanf_s(" %c", &next, 1);
+    getchar();
+
+    if (next == 'y' || next == 'Y')
+    {
+        (*dun_lev)++;
+    }
+    else
+    {
+        printf("게임을 종료합니다\n");
+        exit(0);
+    }
+}
+void resetMop(MOP* mop, int difficulty, int isNight)
+{
+    int i = 0;
+    for (i = 0;i < 3;i++)
+    {
+        mop[i].hp = mop[i].base_hp + difficulty * 20;
+        mop[i].dam = mop[i].basDam + difficulty * 2;
+
+        if (isNight)
+        {
+            mop[i].hp = (int)(mop[i].hp * 1.5);
+            mop[i].dam = (int)(mop[i].dam * 1.5);
+        }
+    }
+}
+int calculateDamage(CHARACTER* character)
+{
+    int basdam = 5;
+    double dammul = 1.0;
+
+    dammul += sqrt(character->strength) * 1.2;
+    dammul += sqrt(character->agility) * 1.0;
+    dammul += sqrt(character->intelligence) * 0.8;
+    dammul += sqrt(character->luck) * 1.4;
+
+    return (int)(basdam * dammul);
+}
+
+void levelUp(CHARACTER* character)
+{
+    if (character->exp >= 100)
+    {
+        character->level++;
+        character->exp -= 100;
+        character->max_hp += 10;
+        character->hp = character->max_hp;
+
+        printf("\n레벨업! %d 레벨에 도달했습니다.\n", character->level);
+
+        int stat_increase1 = rand() % 4;
+        int stat_increase2 = rand() % 4;
+        while (stat_increase1 == stat_increase2)
+        {
+            stat_increase2 = rand() % 4;
+        }
+
+        int* stats[] = { &character->strength, &character->agility, &character->intelligence, &character->luck };
+        *stats[stat_increase1] += 2;
+        *stats[stat_increase2] += 2;
+
+        printf("스탯이 상승했습니다!\n");
+        PrintCharacterStat(character);
+
+        if ((*character).level == 20 || character->level == 40)
+        {
+            promoteCharacter(character);
+        }
+    }
+}
+void promoteCharacter(CHARACTER* character)
+{
+    printf("\n--- 전직 가능! ---\n");
+    printf("현재 직업: %s\n", character->job);
+
+    if (character->level == 20)
+    {
+        if (strcmp(character->job, "전사") == 0)
+        {
+            printf("1. 파이터 (공격력 증가)\n");
+            printf("2. 페이지 (방어력 증가)\n");
+        }
+        else if (strcmp(character->job, "궁수") == 0)
+        {
+            printf("1. 헌터 (회피율 증가)\n");
+            printf("2. 사수 (명중률 증가)\n");
+        }
+        else if (strcmp(character->job, "마법사") == 0)
+        {
+            printf("1. 위자드 (마법 공격력 증가)\n");
+            printf("2. 클레릭 (성 속성 스킬 추가)\n");
+        }
+        else if (strcmp(character->job, "도적") == 0)
+        {
+            printf("1. 어쌔신 (치명타 확률 증가)\n");
+            printf("2. 시프 (회피율 증가)\n");
+        }
+    }
+    else if (character->level == 40)
+    {
+        if (strcmp(character->job, "파이터") == 0)
+        {
+            printf("1. 크루세이더 (공격력 특화)\n");
+        }
+        else if (strcmp(character->job, "페이지") == 0)
+        {
+            printf("1. 나이트 (방어력 특화)\n");
+        }
+        else if (strcmp(character->job, "헌터") == 0)
+        {
+            printf("1. 레인저 (원거리 공격력 증가)\n");
+        }
+        else if (strcmp(character->job, "사수") == 0)
+        {
+            printf("1. 저격수 (단일 타겟 공격 특화)\n");
+        }
+        else if (strcmp(character->job, "위자드") == 0)
+        {
+            printf("1. 메이지 (마법 공격 최강)\n");
+        }
+        else if (strcmp(character->job, "클레릭") == 0)
+        {
+            printf("1. 프리스트 (성 속성 스킬 강화)\n");
+        }
+        else if (strcmp(character->job, "어쌔신") == 0)
+        {
+            printf("1. 허밋 (은신 & 치명타 증가)\n");
+        }
+        else if (strcmp(character->job, "시프") == 0)
+        {
+            printf("1. 시프마스터 (속도 증가)\n");
+        }
+    }
+
+    printf("전직을 선택하세요 (1-2): ");
+    int choice;
+    scanf_s("%d", &choice);
+
+    if (character->level == 20)
+    {
+        if (strcmp(character->job, "전사") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "파이터" : "페이지");
+        else if (strcmp(character->job, "궁수") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "헌터" : "사수");
+        else if (strcmp(character->job, "마법사") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "위자드" : "클레릭");
+        else if (strcmp(character->job, "도적") == 0)
+            strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "어쌔신" : "시프");
+    }
+    else if (character->level == 40)
+    {
+        if (strcmp(character->job, "파이터") == 0)
+            strcpy_s(character->job, sizeof(character->job), "크루세이더");
+        else if (strcmp(character->job, "페이지") == 0)
+            strcpy_s(character->job, sizeof(character->job), "나이트");
+        else if (strcmp(character->job, "헌터") == 0)
+            strcpy_s(character->job, sizeof(character->job), "레인저");
+        else if (strcmp(character->job, "사수") == 0)
+            strcpy_s(character->job, sizeof(character->job), "저격수");
+        else if (strcmp(character->job, "위자드") == 0)
+            strcpy_s(character->job, sizeof(character->job), "메이지");
+        else if (strcmp(character->job, "클레릭") == 0)
+            strcpy_s(character->job, sizeof(character->job), "프리스트");
+        else if (strcmp(character->job, "어쌔신") == 0)
+            strcpy_s(character->job, sizeof(character->job), "허밋");
+        else if (strcmp(character->job, "시프") == 0)
+            strcpy_s(character->job, sizeof(character->job), "시프마스터");
+    }
+
+    printf("\n전직 완료! 새로운 직업: %s\n", character->job);
+    PrintCharacterStat(character);
+}
+
+void enterTown(CHARACTER* character)
+{
+    int choice;
+    int dun_lev = 0;
+
+    while (1)
+    {
+        printf("1. 여관 (체력 회복)\n");
+        printf("2. 대장간 (무기 강화)\n");
+        printf("3. 던전 탐험\n");
+        printf("4. 상태 보기\n");
+        printf("5. 게임 종료\n");
+        printf("선택: ");
+
+        while (scanf_s("%d", &choice) != 1 || choice < 1 || choice > 5)
+        {
+            while (getchar() != '\n');
+            printf("잘못된 선택입니다. 다시 입력해주세요: ");
+        }
+
+        switch (choice)
+        {
+        case 1:
+            inn(character);
+            break;
+        case 2:
+            blacksmith(character);
+            break;
+        case 3:
+            enterDungeon(dun_lev);
+            return;
+        case 4:
+            PrintCharacterStat(character);
+            break;
+        case 5:
+            printf("게임을 종료합니다.\n");
+            exit(0);
+        default:
+            printf("잘못된 선택입니다.\n");
+            break;
+        }
+
+    }
+}
+void inn(CHARACTER* character)
+{
+    int choice;
+    printf("1. 체력 회복\n");
+    printf("2. 시간 변경 (낮/밤)\n");
+    printf("선택: ");
+    scanf_s("%d", &choice);
+
+    if (choice == 1)
+    {
+        character->hp = character->max_hp;
+        printf("체력이 전부 회복되었습니다.\n");
+    }
+    else if (choice == 2)
+    {
+        character->isNight = !(character->isNight);
+        if (character->isNight) // isNight가 1일때
+        {
+            printf("밤이 깊었습니다.. 던전의 몬스터들은 더욱 흉포해졌습니다..\n");
+        }
+        else // isNight가 0일때
+        {
+            printf("낮이 되었습니다. 던전의 몬스터들은 원래대로 돌아왔습니다.");
+        }
+    }
+    else
+    {
+        printf("잘못된 선택입니다.\n");
+    }
+}
+void blacksmith(CHARACTER* character)
+{
+    int choice;
+    printf("1. 무기 강화\n");
+    printf("2. 무기 상태 보기\n");
+    printf("선택: ");
+    scanf_s("%d", &choice);
+
+    if (choice == 1)
+    {
+        upgrade_weapon(character);
+    }
+    else if (choice == 2)
+    {
+        printf("현재 무기 데미지: %d\n", character->weapondmg);
+        printf("무기 강화 상태: +%d\n", character->weaponup);
+    }
+    else {
+        printf("잘못된 선택입니다.\n");
+    }
+}
+void upgrade_weapon(CHARACTER* character)
+{
+    int upgrade_success = rand() % 100;
+    if (character->weaponup < 20)
+    {
+        if (character->weaponup < 10)
+        {
+
+            if (upgrade_success < 70)
+            {
+                character->weaponup++;
+                character->weapondmg++;
+                character->gold -= 50;
+                printf("무기 강화 성공! 무기 데미지가 +1 증가했습니다.\n");
+                printf("\n");
+                if (character->gold <= 0)
+                {
+                    printf("골드가 부족합니다.");
+                }
+                printf("\n");
+
+            }
+            else
+            {
+                character->gold -= 50;
+                printf("무기 강화 실패.\n");
+                printf("\n");
+                if (character->gold <= 0)
+                {
+                    printf("골드가 부족합니다.");
+                }
+                printf("\n");
+            }
+        }
+        else
+        {
+            if (upgrade_success < 50 - (character->weapondmg - 10) * 5)
+            {
+                character->weaponup++;
+                character->weapondmg += 2;
+                printf("무기 강화 성공! 무기 데미지가 +2 증가했습니다.\n");
+            }
+            else
+            {
+                printf("무기 강화 실패.\n");
+            }
+        }
+    }
+    else
+    {
+        printf("무기는 최대 강화 상태입니다.\n");
+    }
+}
+
