@@ -86,9 +86,9 @@ int main(void)
     CHARACTER character;
 
     MOP mop[3] =
-    { {"슬라임", 200, 200 , 5, 5, 40, 10},
-      {"임프", 300, 300, 10, 10, 60, 20},
-      {"고블린", 400, 400, 13, 13, 100, 40}
+    { {"슬라임", 150, 150 , 5, 5, 40, 10},
+      {"임프", 250, 250, 10, 10, 60, 20},
+      {"고블린", 300, 300, 13, 13, 100, 40}
     };
 
     CreateCharacter(&character);
@@ -116,6 +116,7 @@ void CreateCharacter(CHARACTER* character)
 
     int choice;
     scanf_s("%d", &choice);
+    while (getchar() != '\n');
 
     switch (choice)
     {
@@ -125,7 +126,7 @@ void CreateCharacter(CHARACTER* character)
         character->agility = 5;
         character->intelligence = 3;
         character->luck = 2;
-        character->max_hp = 120;
+        character->max_hp = 200;
         break;
     case 2:
         strcpy_s(character->job, sizeof(character->job), "궁수");
@@ -133,7 +134,7 @@ void CreateCharacter(CHARACTER* character)
         character->agility = 10;
         character->intelligence = 4;
         character->luck = 3;
-        character->max_hp = 100;
+        character->max_hp = 180;
         break;
     case 3:
         strcpy_s(character->job, sizeof(character->job), "마법사");
@@ -141,7 +142,7 @@ void CreateCharacter(CHARACTER* character)
         character->agility = 4;
         character->intelligence = 10;
         character->luck = 3;
-        character->max_hp = 90;
+        character->max_hp = 150;
         break;
     case 4:
         strcpy_s(character->job, sizeof(character->job), "도적");
@@ -149,7 +150,7 @@ void CreateCharacter(CHARACTER* character)
         character->agility = 5;
         character->intelligence = 4;
         character->luck = 10;
-        character->max_hp = 100;
+        character->max_hp = 170;
         break;
     default:
         printf("잘못된 선택입니다. 전사로 설정합니다.\n");
@@ -210,7 +211,7 @@ int enterDungeon(int dun_lev)
     char enter;
     textcolor(WHITE);
     printf("슬리피 던전 깊이 내려가는중.... (Press Enter)\n");
-    getchar();
+    while (getchar() != '\n');
 
     return 1;
 }
@@ -226,7 +227,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
 
         printf("%s가 나타났다! 싸우겠습니까? (y/n) ", mop[i].name);
         scanf_s(" %c", &fight, 1);
-        getchar();
+        while (getchar() != '\n');
 
         printf("\n");
 
@@ -241,7 +242,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 mop[i].hp -= damTomop;
                 printf("%s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, damTomop, mop[i].hp);
                 printf("\n");
-                if (mop[i].hp <= 0)
+                if (mop[i].hp < 0)
                 {
                     printf("%s를 처치했다! \n", mop[i].name);
                     character->exp += mop[i].exp;
@@ -282,9 +283,8 @@ void nextDun(int* dun_lev, MOP* mop, CHARACTER* character)
     char next;
     resetMop(mop, *dun_lev, character->isNight);
     printf("%d층 클리어!! 다음 층으로 이동하시겠습니까? (y/n) ", *dun_lev);
-
     scanf_s(" %c", &next, 1);
-    getchar();
+    while (getchar() != '\n');
 
     if (next == 'y' || next == 'Y')
     {
@@ -306,8 +306,8 @@ void resetMop(MOP* mop, int difficulty, int isNight)
 
         if (isNight)
         {
-            mop[i].hp = (int)(mop[i].hp * 1.5);
-            mop[i].dam = (int)(mop[i].dam * 1.5);
+            mop[i].hp = (int)(mop[i].hp * 1.2);
+            mop[i].dam = (int)(mop[i].dam * 1.2);
         }
     }
 }
@@ -474,7 +474,7 @@ void enterTown(CHARACTER* character)
 
         while (scanf_s("%d", &choice) != 1 || choice < 1 || choice > 5)
         {
-            while (getchar() != '\n');
+            getchar();
             printf("잘못된 선택입니다. 다시 입력해주세요: ");
         }
 
@@ -509,6 +509,7 @@ void inn(CHARACTER* character)
     printf("2. 시간 변경 (낮/밤)\n");
     printf("선택: ");
     scanf_s("%d", &choice);
+    getchar();
 
     if (choice == 1)
     {
