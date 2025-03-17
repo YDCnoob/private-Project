@@ -560,10 +560,10 @@ void upgrade_weapon(CHARACTER* character)
     int upgrade_success = rand() % 100;
     if (character->gold <= 0)
     {
-        printf("골드가 부족합니다. 무기 강화가 불가능합니다.\n");
+        printf("골드가 부족합니다.\n");
         return;
     }
-    
+
     if (character->weaponup < 20)
     {
         if (character->weaponup < 10)
@@ -578,7 +578,7 @@ void upgrade_weapon(CHARACTER* character)
                 printf("\n");
                 if (character->gold <= 0)
                 {
-                    printf("골드가 부족합니다. 무기 강화가 불가능합니다.\n");
+                    printf("골드가 부족합니다.\n");
                     return;
                 }
                 printf("\n");
@@ -616,5 +616,4 @@ void upgrade_weapon(CHARACTER* character)
         printf("무기는 최대 강화 상태입니다.\n");
     }
 }
-
 
