@@ -52,7 +52,7 @@ public:
         : accID(id), balance(bal) 
     {
         cusName = new char[strlen(name) + 1];
-        strcpy_s(cusName, strlen(name), name);
+        strcpy_s(cusName, strlen(name)+1, name);
     }
 
     ~Account() 
