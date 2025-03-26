@@ -89,13 +89,13 @@ void MakeAccount(void)
 		cout << "예금액: ";
 		cin >> balance;
 		acc[i].balance = balance;
-
+		accNum++;
 		cout << "계좌 개설 완료." << endl;
 	}
 	cout << "=============== [계좌 개설] ===============" << endl;
 	cout << endl;
 
-	accNum++;
+	
 }
 void DepositMoney(void) // 없는 계좌를 넣으면 없다고 안내
 {
