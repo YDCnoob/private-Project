@@ -1,0 +1,174 @@
+/*
+* Banking System Ver 0.3
+* 작성자: 최현우
+* 내	  용: Account 클래스의 복사 생성자 추가
+*/
+
+#include <iostream>
+using namespace std;
+
+const int NAME_LEN = 20;
+const int MAX_ACC = 100;
+
+void ShowMenu();
+void MakeAccount();
+void DepositMoney();
+void WithdrawMoney();
+void ShowAllAccInfo();
+
+enum label { MAKE = 1, DEPOSIT, WITHDRAW, INQUIRE, EXIT };
+
+class Account
+{
+private:
+    int accID;
+    int balance;
+    char* cusName;
+
+public:
+    Account(int id, const char* name, int bal)
+        : accID(id), balance(bal)
+    {
+        cusName = new char[strlen(name) + 1];
+        strcpy_s(cusName, strlen(name) + 1, name);
+    }
+    int GetAccID() const
+    {
+        return accID;
+    }
+    void Deposit(int money)
+    {
+        balance += money;
+    }
+    int Withdraw(int money)
+    {
+        if (balance < money)
+        {
+            cout << "잔액 부족!" << endl;
+            return 0;
+        }
+        balance -= money;
+        return money;
+    }
+    void ShowAccInfo() const
+    {
+        cout << "계좌번호: " << accID << endl;
+        cout << "예금주: " << cusName << endl;
+        cout << "잔액: " << balance << endl << endl;
+    }
+    ~Account()
+    {
+        delete[] cusName;
+    }
+};
+
+Account* accArr[MAX_ACC];
+int accCnt = 0;
+
+int main()
+{
+    int choice;
+    while (true)
+    {
+        ShowMenu();
+        cout << "선택: ";
+        cin >> choice;
+        switch (choice)
+        {
+        case MAKE:
+            MakeAccount();
+            break;
+        case DEPOSIT:
+            DepositMoney();
+            break;
+        case WITHDRAW:
+            WithdrawMoney();
+            break;
+        case INQUIRE:
+            ShowAllAccInfo();
+            break;
+        case EXIT:
+            for (int i = 0; i < accCnt; i++)
+                delete accArr[i];
+            return 0;
+        default:
+            cout << "잘못된 입력입니다. 다시 입력하세요." << endl;
+        }
+    }
+}
+void ShowMenu()
+{
+    cout << "=======[업무]=======" << endl;
+    cout << "1. 계좌 개설" << endl;
+    cout << "2. 입금" << endl;
+    cout << "3. 출금" << endl;
+    cout << "4. 잔액 조회" << endl;
+    cout << "5. 프로그램 종료" << endl;
+    cout << "===================" << endl;
+}
+
+void MakeAccount()
+{
+    int id, balance;
+    char name[NAME_LEN];
+    cout << endl;
+    for (int i = 0;i < 2;i++)
+    {
+        cout << "==========   계좌 개설   ==========" << endl;
+        cout << "계좌번호: "; cin >> id;
+        cout << "예금주: "; cin >> name;
+        cout << "입금액: "; cin >> balance;
+        accArr[accCnt++] = new Account(id, name, balance);
+        cout << "계좌 개설 완료!" << endl;
+
+    }
+    cout << "=========  계좌 개설 완료  =========" << endl;
+    cout << "생성된 계좌 수: " << accCnt << endl;
+    cout << endl;
+}
+void DepositMoney()
+{
+    int id, money;
+    cout << "계좌번호: "; cin >> id;
+    cout << "입금액: "; cin >> money;
+    for (int i = 0; i < accCnt; i++)
+    {
+        if (accArr[i]->GetAccID() == id)
+        {
+            accArr[i]->Deposit(money);
+            cout << "입금 완료!" << endl;
+            return;
+        }
+    }
+    cout << "존재하지 않는 계좌입니다." << endl;
+}
+void WithdrawMoney()
+{
+    int id, money;
+    cout << "계좌번호: "; cin >> id;
+    cout << "출금액: "; cin >> money;
+    for (int i = 0; i < accCnt; i++)
+    {
+        if (accArr[i]->GetAccID() == id)
+        {
+            if (accArr[i]->Withdraw(money))
+                cout << "출금 완료!" << endl;
+            return;
+        }
+    }
+    cout << "존재하지 않는 계좌입니다." << endl;
+}
+void ShowAllAccInfo()
+{
+    cout << endl;
+    cout << "========== 계좌 확인 ==========" << endl;
+    cout << "총 생성 계좌 수: " << accCnt << endl;
+    cout << endl;
+    for (int i = 0; i < accCnt; i++)
+    {
+        accArr[i]->ShowAccInfo();
+    }
+    cout << "========== 계좌 확인 ==========" << endl;
+    cout << endl;
+}
+
