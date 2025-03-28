@@ -71,8 +71,7 @@ public:
             cout << "잔액 부족!" << endl;
             return false;
         }
-        balance -= money;
-        return true;
+        return balance -= money;
     }
     void ShowAccInfo() const
     {
@@ -113,7 +112,7 @@ int main()
             break;
         case EXIT:
             for (int i = 0; i < accCnt; i++)
-                delete accArr[i];
+                delete[] accArr[i];
             return 0;
         default:
             cout << "잘못된 입력입니다. 다시 입력하세요." << endl;
@@ -135,6 +134,7 @@ void MakeAccount()
 {
     int id, balance;
     char name[NAME_LEN];
+    cout << endl;
     for (int i = 0;i < 2;i++)
     {
         cout << "==========   계좌 개설   ==========" << endl;
@@ -146,6 +146,8 @@ void MakeAccount()
         
     }
     cout << "=========  계좌 개설 완료  =========" << endl;
+    cout << "생성된 계좌: " << accCnt << endl;
+    cout << endl;
 }
 
 void DepositMoney()
@@ -184,10 +186,14 @@ void WithdrawMoney()
 
 void ShowAllAccInfo()
 {
+    cout << endl;
+    cout << "========== 계좌 확인 ==========" << endl;
+    cout << "총 생성 구좌: " << accCnt << endl;
+    cout << endl;
     for (int i = 0; i < accCnt; i++)
     {
         accArr[i]->ShowAccInfo();
     }
+    cout << "========== 계좌 확인 ==========" << endl;
+    cout << endl;
 }
-
-
