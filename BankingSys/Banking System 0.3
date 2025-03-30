@@ -26,6 +26,12 @@ private:
     char* cusName;
 
 public:
+    explicit Account(const Account& copy)
+        :cusName(copy.cusName)
+    {
+        cusName = new char[strlen(copy.cusName) + 1];
+        strcpy_s(cusName, strlen(copy.cusName) + 1, copy.cusName);
+    }
     Account(int id, const char* name, int bal)
         : accID(id), balance(bal)
     {
@@ -171,4 +177,5 @@ void ShowAllAccInfo()
     cout << "========== 계좌 확인 ==========" << endl;
     cout << endl;
 }
+
 
