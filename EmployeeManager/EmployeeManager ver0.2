@@ -1,0 +1,126 @@
+#include <iostream>
+using namespace std;
+
+#define MAN 50
+
+class Employee
+{
+private:
+	char* name;
+
+public:
+	Employee(const char* _name) 
+	{
+		name = new char[strlen(_name) + 1];
+		strcpy_s(name, strlen(_name) + 1, _name);
+	}
+
+	void ShowEmpInfo() const
+	{
+		cout << "이 름: " << name << endl;
+	}
+};
+
+class PermanentWorker : public Employee// 정규직 = 기본급여
+{
+private:
+	int salary;
+
+public:
+	PermanentWorker(const char* name, int money) 
+		:Employee(name),salary(money)
+	{
+		
+	}
+
+	int GetPay() const
+	{
+		return salary;
+	}
+	
+	void ShowSalaryInfo() const
+	{
+		ShowEmpInfo();
+		cout << "salary: " << salary << endl;
+	}
+	~PermanentWorker() {}
+};
+
+class Sales : public PermanentWorker// 영업직 = 기본급여 + 인센티브
+{
+private:
+	int Incentive;
+
+public:
+	Sales(const char* _name, int _salary, int _incen)
+		:PermanentWorker(_name, _salary), Incentive(_incen)
+	{}
+
+	void ShowSalesInfo() const
+	{
+		ShowSalaryInfo();
+		cout << "추가 급여: " << Incentive << endl;
+	}
+};
+
+class Temporary : public Employee// 임시직 = 시급 * 근로시간 
+{
+private:
+	int TimeWage;
+	int WorkTime;
+
+public:
+	Temporary(const char* _name,int _TimeWage, int _WorkTime)
+		:Employee(_name), TimeWage(_TimeWage), WorkTime(_WorkTime)
+	{}
+
+	void ShowTempInfo()
+	{
+		ShowEmpInfo();
+		cout << "급 여: " << TimeWage * WorkTime << endl;
+	}
+};
+
+class EmployeeHandler // 얘를 어떻게 조져야하나
+{					  // 컨트롤 클래스
+private:
+	Employee* emp[MAN];
+	int empNum;
+
+public:
+	EmployeeHandler() : empNum(0) { emp[0] = 0; }
+	void AddEmployee(Employee* p_emp) // 신규직원 추가
+	{
+		emp[empNum++] = p_emp;
+	}
+	void ShowAllSalaryInfo() // 전체 급여 정보 출력
+	{
+		/*for (int i = 0; i < empNum; i++)
+			emp[i]->ShowSalaryInfo();*/
+	}
+	void ShowTotalSalary()
+	{
+		int sum = 0;
+		/*for (int i = 0; i < empNum; i++)
+			sum += emp[i]->GetPay();*/
+		cout << "Total Salary: " << sum << endl;
+	}
+	~EmployeeHandler()
+	{
+		for (int i = 0; i < empNum; i++)
+			delete emp[i];
+	}
+};
+int main(void)
+{
+	EmployeeHandler Handler;
+
+	Handler.AddEmployee(new PermanentWorker("리가현", 1000));
+	Handler.AddEmployee(new PermanentWorker("리수진", 1500));
+	Handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
+
+	Handler.ShowAllSalaryInfo();
+	Handler.ShowTotalSalary();
+
+	return 0;
+}
