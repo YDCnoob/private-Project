@@ -49,17 +49,17 @@ public:
 class Sales : public PermanentWorker// 영업직 = 기본급여 + 인센티브
 {
 private:
-	int ratio;
+	double ratio;
 	int incen;
 
 public:
-	Sales(const char* _name, int _salary, int _ratio)
+	Sales(const char* _name, int _salary, double _ratio)
 		:PermanentWorker(_name, _salary), ratio(_ratio)
 	{}
 
-	int AddSalesResult(int n1)
+	void AddSalesResult(int n1)
 	{
-		return incen = n1;
+		incen += n1;
 	}
 
 	int GetPay()
