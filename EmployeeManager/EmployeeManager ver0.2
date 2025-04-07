@@ -9,11 +9,13 @@ private:
 	char* name;
 
 public:
-	Employee(const char* _name) 
+	Employee(const char* _name)
 	{
 		name = new char[strlen(_name) + 1];
 		strcpy_s(name, strlen(_name) + 1, _name);
 	}
+
+	~Employee() { delete[] name; }
 
 	void ShowEmpInfo() const
 	{
@@ -27,17 +29,17 @@ private:
 	int salary;
 
 public:
-	PermanentWorker(const char* name, int money) 
-		:Employee(name),salary(money)
+	PermanentWorker(const char* name, int money)
+		:Employee(name), salary(money)
 	{
-		
+
 	}
 
 	int GetPay() const
 	{
 		return salary;
 	}
-	
+
 	void ShowSalaryInfo() const
 	{
 		ShowEmpInfo();
@@ -54,23 +56,24 @@ private:
 
 public:
 	Sales(const char* _name, int _salary, double _ratio)
-		:PermanentWorker(_name, _salary), ratio(_ratio)
-	{}
+		:PermanentWorker(_name, _salary), ratio(_ratio), incen(0)
+	{
+	}
 
 	void AddSalesResult(int n1)
 	{
 		incen = n1;
 	}
 
-	int GetPay()
+	int GetPay() const
 	{
-		return;
+		return PermanentWorker::GetPay() + (incen * ratio);
 	}
 
 	void ShowSalaryInfo() const
 	{
 		ShowEmpInfo();
-		cout << "salary: " << GetPay() << endl;
+		cout << "salary: " << PermanentWorker::GetPay() << endl;
 	}
 };
 
@@ -82,8 +85,9 @@ private:
 
 public:
 	Temporary(const char* _name, int _pay)
-		:Employee(_name), payPerHour(_pay)
-	{}
+		:Employee(_name), payPerHour(_pay), WorkTime(0)
+	{
+	}
 
 	void AddWorkTime(int n1)
 	{
@@ -95,7 +99,7 @@ public:
 		return payPerHour * WorkTime;
 	}
 
-	void ShowTempInfo()
+	void ShowSalaryInfo()
 	{
 		ShowEmpInfo();
 		cout << "Salary: " << GetPay() << endl;
@@ -140,15 +144,15 @@ int main(void)
 	Handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
 
 	Sales* seller = new Sales("리시현", 1000, 0.1);
-	seller->AddSalesResult(7000); 
+	seller->AddSalesResult(7000);
 	seller->ShowSalaryInfo();
 	Handler.AddEmployee(seller);
 
 	Temporary* Temp = new Temporary("리강인", 700);
 	Temp->AddWorkTime(5);
-	Temp->ShowTempInfo();
+	Temp->ShowSalaryInfo();
 	Handler.AddEmployee(Temp);
-	
+
 	Handler.ShowAllSalaryInfo();
 	Handler.ShowTotalSalary();
 
