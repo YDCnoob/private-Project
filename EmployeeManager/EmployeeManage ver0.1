@@ -1,0 +1,81 @@
+#include <iostream>
+using namespace std;
+
+#define MAN 50
+
+class PermanentWorker // 정규직 = 기본급여
+{
+private:
+	char name[30];
+	int salary;
+
+public:
+	PermanentWorker(const char* name, int money) : salary(money) 
+	{
+		strcpy_s(this->name, name);
+	}
+	int GetPay() const
+	{
+		return salary;
+	}
+	void ShowSalaryInfo() const
+	{
+		cout << "name: " << name << endl;
+		cout << "salary: " << GetPay() << endl;
+	}
+	~PermanentWorker() {}
+};
+
+class Sales // 영업직 = 기본급여 + 인센티브
+{
+
+};
+
+class Temporary // 임시직 = 시급 * 근로시간 
+{
+
+};
+
+class EmployeeHandler // 프로그램 전체 기능의 처리를, 프로그램의 흐름을 담당
+{					  // 컨트롤 클래스
+private:
+	PermanentWorker* emp[MAN];
+	int empNum;
+
+public:
+	EmployeeHandler() : empNum(0) { emp[0] = 0; }
+	void AddEmployee(PermanentWorker* p_emp) // 신규직원 추가
+	{
+		emp[empNum++] = p_emp;
+	}
+	void ShowAllSalaryInfo() // 전체 급여 정보 출력
+	{
+		for (int i = 0; i < empNum; i++)
+			emp[i]->ShowSalaryInfo();
+	}
+	void ShowTotalSalary() 
+	{
+		int sum = 0;
+		for (int i = 0; i < empNum; i++)
+			sum += emp[i]->GetPay();
+		cout << "Total Salary: " << sum << endl;
+	}
+	~EmployeeHandler()
+	{
+		for (int i = 0; i < empNum; i++)
+			delete emp[i];
+	}
+}; 
+int main(void)
+{
+	EmployeeHandler Handler;
+
+	Handler.AddEmployee(new PermanentWorker("리가현", 1000));
+	Handler.AddEmployee(new PermanentWorker("리수진", 1500));
+	Handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
+
+	Handler.ShowAllSalaryInfo();
+	Handler.ShowTotalSalary();
+
+	return 0;
+}
