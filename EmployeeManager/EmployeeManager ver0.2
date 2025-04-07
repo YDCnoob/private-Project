@@ -59,7 +59,7 @@ public:
 
 	void AddSalesResult(int n1)
 	{
-		incen += n1;
+		incen = n1;
 	}
 
 	int GetPay()
@@ -85,9 +85,9 @@ public:
 		:Employee(_name), payPerHour(_pay)
 	{}
 
-	int AddWorkTime(int n1)
+	void AddWorkTime(int n1)
 	{
-		return WorkTime = n1;
+		WorkTime = n1;
 	}
 
 	int GetPay()
