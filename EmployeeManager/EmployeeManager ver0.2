@@ -17,7 +17,7 @@ public:
 
 	void ShowEmpInfo() const
 	{
-		cout << "이 름: " << name << endl;
+		cout << "name: " << name << endl;
 	}
 };
 
@@ -41,7 +41,7 @@ public:
 	void ShowSalaryInfo() const
 	{
 		ShowEmpInfo();
-		cout << "salary: " << salary << endl;
+		cout << "Salary: " << GetPay() << endl;
 	}
 	~PermanentWorker() {}
 };
@@ -49,39 +49,60 @@ public:
 class Sales : public PermanentWorker// 영업직 = 기본급여 + 인센티브
 {
 private:
-	int Incentive;
+	int ratio;
+	int incen;
 
 public:
-	Sales(const char* _name, int _salary, int _incen)
-		:PermanentWorker(_name, _salary), Incentive(_incen)
+	Sales(const char* _name, int _salary, int _ratio)
+		:PermanentWorker(_name, _salary), ratio(_ratio)
 	{}
 
-	void ShowSalesInfo() const
+	int AddSalesResult(int n1)
 	{
-		ShowSalaryInfo();
-		cout << "추가 급여: " << Incentive << endl;
+		return incen = n1;
+	}
+
+	int GetPay()
+	{
+		return;
+	}
+
+	void ShowSalaryInfo() const
+	{
+		ShowEmpInfo();
+		cout << "salary: " << GetPay() << endl;
 	}
 };
 
 class Temporary : public Employee// 임시직 = 시급 * 근로시간 
 {
 private:
-	int TimeWage;
+	int payPerHour;
 	int WorkTime;
 
 public:
-	Temporary(const char* _name,int _TimeWage, int _WorkTime)
-		:Employee(_name), TimeWage(_TimeWage), WorkTime(_WorkTime)
+	Temporary(const char* _name, int _pay)
+		:Employee(_name), payPerHour(_pay)
 	{}
+
+	int AddWorkTime(int n1)
+	{
+		return WorkTime = n1;
+	}
+
+	int GetPay()
+	{
+		return payPerHour * WorkTime;
+	}
 
 	void ShowTempInfo()
 	{
 		ShowEmpInfo();
-		cout << "급 여: " << TimeWage * WorkTime << endl;
+		cout << "Salary: " << GetPay() << endl;
 	}
 };
 
-class EmployeeHandler // 얘를 어떻게 조져야하나
+class EmployeeHandler // 얘를 어떻게 조져야하나 그런데 조져진건 나였고~
 {					  // 컨트롤 클래스
 private:
 	Employee* emp[MAN];
@@ -114,11 +135,20 @@ public:
 int main(void)
 {
 	EmployeeHandler Handler;
-
 	Handler.AddEmployee(new PermanentWorker("리가현", 1000));
 	Handler.AddEmployee(new PermanentWorker("리수진", 1500));
 	Handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
 
+	Sales* seller = new Sales("리시현", 1000, 0.1);
+	seller->AddSalesResult(7000); 
+	seller->ShowSalaryInfo();
+	Handler.AddEmployee(seller);
+
+	Temporary* Temp = new Temporary("리강인", 700);
+	Temp->AddWorkTime(5);
+	Temp->ShowTempInfo();
+	Handler.AddEmployee(Temp);
+	
 	Handler.ShowAllSalaryInfo();
 	Handler.ShowTotalSalary();
 
