@@ -5,6 +5,13 @@
 *         멤버함수를 클래스 외부에 정의
 */
 
+/*
+* Banking System Ver 0.5
+* 작성자: 최현우
+* 내	  용: AccountHandler라는 이름의 컨트롤 클래스 정의
+*         멤버함수를 클래스 외부에 정의
+*/
+
 #include <iostream>
 using namespace std;
 
@@ -21,17 +28,18 @@ private:
     char* cusName;
 
 public:
-    explicit Account(const Account& copy)
-        :cusName(copy.cusName), accID(copy.accID), balance(copy.balance)
-    {
-        cusName = new char[strlen(copy.cusName) + 1];
-        strcpy_s(cusName, strlen(copy.cusName) + 1, copy.cusName);
-    }
+    
     Account(int id, const char* name, int bal)
         : accID(id), balance(bal)
     {
         cusName = new char[strlen(name) + 1];
         strcpy_s(cusName, strlen(name) + 1, name);
+    }
+    Account(const Account& copy)
+        : accID(copy.accID), balance(copy.balance)
+    {
+        cusName = new char[strlen(copy.cusName) + 1];
+        strcpy_s(cusName, strlen(copy.cusName) + 1, copy.cusName);
     }
     int GetAccID() const
     {
@@ -69,6 +77,8 @@ private:
     Account* accArr[MAX_ACC];
     int accCnt;
 public:
+    AccountHandler() : accCnt(0) {}
+
     void ShowMenu();
     void MakeAccount();
     void DepositMoney();
@@ -77,6 +87,12 @@ public:
     int Getacc() const
     {
         return accCnt;
+    }
+
+    ~AccountHandler() 
+    {
+        for (int i = 0; i < accCnt; i++)
+            delete accArr[i];
     }
 };
 
@@ -104,8 +120,6 @@ int main(void)
             ACH.ShowAllAccInfo();
             break;
         case EXIT:
-            for (int i = 0; i < ACH.Getacc(); i++)
-                delete accArr[i];
             return 0;
         default:
             cout << "잘못된 입력입니다. 다시 입력하세요." << endl;
@@ -187,5 +201,6 @@ void AccountHandler::ShowAllAccInfo()
     cout << "========== 계좌 확인 ==========" << endl;
     cout << endl;
 }
+
 
 
