@@ -1,4 +1,3 @@
-
 /*
 * Banking System Ver 0.5
 * 작성자: 최현우
@@ -68,9 +67,14 @@ public:
 class AccountHandler
 {
 private:
+
+   static const int NAME_LEN = 20;
+   static const int MAX_ACC = 100;
+    enum label { MAKE = 1, DEPOSIT, WITHDRAW, INQUIRE, EXIT };
+
+public:
     Account* accArr[MAX_ACC];
     int accCnt;
-public:
     AccountHandler() : accCnt(0) {}
 
     void ShowMenu();
@@ -195,6 +199,4 @@ void AccountHandler::ShowAllAccInfo()
     cout << "========== 계좌 확인 ==========" << endl;
     cout << endl;
 }
-
-
 
