@@ -20,7 +20,7 @@ public:
 	}
 
 	virtual int GetPay() const { return 0; }
-	virtual void ShowSalaryInfo() const { 0; }
+	virtual void ShowSalaryInfo() const {}
 };
 
 class PermanentWorker : public Employee// 정규직 = 기본급여
@@ -153,10 +153,12 @@ int main(void)
 
 	SalesWorker* seller = new SalesWorker("리시현", 1000, 0.1);
 	seller->AddSalesResult(7000);
+	//seller->ShowSalaryInfo();
 	handler.AddEmployee(seller);
 
 	TemporaryWorker* alba = new TemporaryWorker("리강인", 700);
 	alba->AddWorkTime(5);
+	//alba->ShowSalaryInfo();
 	handler.AddEmployee(alba);
 
 	handler.ShowAllSalaryInfo();
