@@ -84,12 +84,11 @@ private:
 public:
 	TemporaryWorker(const char* _name, int _pay)
 		:Employee(_name), payPerHour(_pay), WorkTime(0)
-	{
-	}
+	{}
 
-	void AddWorkTime(int n1)
+	void AddWorkTime(int time)
 	{
-		WorkTime = n1;
+		WorkTime += time;
 	}
 
 	int GetPay() const
@@ -107,52 +106,56 @@ public:
 class EmployeeHandler // 얘를 어떻게 조져야하나 그런데 조져진건 나였고~
 {					  // 컨트롤 클래스
 private:
-	Employee* emp[MAN];
+	Employee* empList[MAN];
 	int empNum;
 
 public:
-	EmployeeHandler() : empNum(0) { emp[0] = 0; }
+	EmployeeHandler() 
+		: empNum(0) 
+	{ 
+		empList[0] = 0; 
+	}
 	void AddEmployee(Employee* p_emp) // 신규직원 추가
 	{
-		emp[empNum++] = p_emp;
+		empList[empNum++] = p_emp;
 	}
 	void ShowAllSalaryInfo() // 전체 급여 정보 출력
 	{
 		//for (int i = 0; i < empNum; i++)
-			//emp[i]->ShowSalaryInfo();
+			//empempList[i]->ShowSalaryInfo();
 	}
 	void ShowTotalSalary()
 	{
 		int sum = 0;
 		/*for (int i = 0; i < empNum; i++)
-			sum += emp[i]->GetPay();*/
+			sum += empList[i]->GetPay();*/
 		cout << "Total Salary: " << sum << endl;
 	}
 	~EmployeeHandler()
 	{
 		for (int i = 0; i < empNum; i++)
-			delete emp[i];
+			delete empList[i];
 	}
 };
 int main(void)
 {
-	EmployeeHandler Handler;
-	Handler.AddEmployee(new PermanentWorker("리가현", 1000));
-	Handler.AddEmployee(new PermanentWorker("리수진", 1500));
-	Handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
+	EmployeeHandler handler;
+	handler.AddEmployee(new PermanentWorker("리가현", 1000));
+	handler.AddEmployee(new PermanentWorker("리수진", 1500));
+	handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
 
 	SalesWorker* seller = new SalesWorker("리시현", 1000, 0.1);
 	seller->AddSalesResult(7000);
 	seller->ShowSalaryInfo();
-	Handler.AddEmployee(seller);
+	handler.AddEmployee(seller);
 
-	TemporaryWorker* Temp = new TemporaryWorker("리강인", 700);
-	Temp->AddWorkTime(5);
-	Temp->ShowSalaryInfo();
-	Handler.AddEmployee(Temp);
+	TemporaryWorker* alba = new TemporaryWorker("리강인", 700);
+	alba->AddWorkTime(5);
+	alba->ShowSalaryInfo();
+	handler.AddEmployee(alba);
 
-	Handler.ShowAllSalaryInfo();
-	Handler.ShowTotalSalary();
+	handler.ShowAllSalaryInfo();
+	handler.ShowTotalSalary();
 
 	return 0;
 }
