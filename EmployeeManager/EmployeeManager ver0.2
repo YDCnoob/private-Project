@@ -48,24 +48,22 @@ public:
 class SalesWorker : public PermanentWorker// 영업직 = 기본급여 + 인센티브
 {
 private:
-	double ratio;
-	int incen;
-
+	int salesResult;
+	double bonusratio;
+	
 public:
 	SalesWorker(const char* _name, int _salary, double _ratio)
-		:PermanentWorker(_name, _salary), ratio(_ratio), incen(0)
-	{
+		:PermanentWorker(_name, _salary), bonusratio(_ratio), salesResult(0)
+	{}
 
-	}
-
-	void AddSalesResult(int n1)
+	void AddSalesResult(int value)
 	{
-		incen = n1;
+		salesResult += value;
 	}
 
 	int GetPay() const
 	{
-		return PermanentWorker::GetPay() + (incen * ratio);
+		return PermanentWorker::GetPay() + (salesResult * bonusratio);
 	}
 
 	void ShowSalaryInfo() const
