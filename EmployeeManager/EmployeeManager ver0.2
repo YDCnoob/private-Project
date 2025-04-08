@@ -63,7 +63,7 @@ public:
 
 	int GetPay() const
 	{
-		return PermanentWorker::GetPay() + (salesResult * bonusratio);
+		return PermanentWorker::GetPay() + (int)(salesResult * bonusratio);
 	}
 
 	void ShowSalaryInfo() const
