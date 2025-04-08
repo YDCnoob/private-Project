@@ -1,0 +1,213 @@
+// 지금 수준에서는 enum을 전역변수로 선언하나 class 내부에 선언하나 별 차이는 없으나
+// 실무에서는 클래스 내부에 넣어주는것이 좋다
+
+#include <iostream>
+using namespace std;
+
+#define MAN 50
+
+//enum RISK_LEVEL { RiskA = 30, RiskB = 20, RiskC = 10 };
+
+class Employee
+{
+private:
+	char name[30];
+
+public:
+	Employee(const char* _name)
+	{
+		strcpy_s(this->name, _name);
+	}
+
+	void ShowYourName() const
+	{
+		cout << "name: " << name << endl;
+	}
+
+	virtual ~Employee() {}
+
+	virtual int GetPay() const = 0;     // 순수 가상함수(Pure Virtual Function)
+	virtual void ShowSalaryInfo() const = 0;
+};
+
+class PermanentWorker : public Employee// 정규직 = 기본급여
+{
+private:
+	int salary;
+
+public:
+	PermanentWorker(const char* name, int money)
+		:Employee(name), salary(money)
+	{
+	}
+
+	int GetPay() const
+	{
+		return salary;
+	}
+
+	void ShowSalaryInfo() const
+	{
+		ShowYourName();
+		cout << "Salary: " << GetPay() << endl;
+	}
+	~PermanentWorker() {}
+};
+
+class SalesWorker : public PermanentWorker// 영업직 = 기본급여 + 인센티브
+{
+private:
+	int salesResult;
+	double bonusratio;
+
+public:
+	SalesWorker(const char* _name, int _salary, double _ratio)
+		:PermanentWorker(_name, _salary), bonusratio(_ratio), salesResult(0)
+	{
+	}
+
+	void AddSalesResult(int value)
+	{
+		salesResult += value;
+	}
+
+	int GetPay() const
+	{
+		return PermanentWorker::GetPay() + (int)(salesResult * bonusratio);
+	}
+
+	void ShowSalaryInfo() const
+	{
+		ShowYourName();
+		cout << "salary: " << GetPay() << endl;
+	}
+};
+
+class TemporaryWorker : public Employee// 임시직 = 시급 * 근로시간 
+{
+private:
+	int payPerHour;
+	int WorkTime;
+
+public:
+	TemporaryWorker(const char* _name, int _pay)
+		:Employee(_name), payPerHour(_pay), WorkTime(0)
+	{
+	}
+
+	void AddWorkTime(int time)
+	{
+		WorkTime += time;
+	}
+
+	int GetPay() const
+	{
+		return payPerHour * WorkTime;
+	}
+
+	void ShowSalaryInfo() const
+	{
+		ShowYourName();
+		cout << "Salary: " << GetPay() << endl;
+	}
+};
+
+class ForeignSalesWorker : public SalesWorker
+{
+public:
+	enum RISK_LEVEL { RiskA = 30, RiskB = 20, RiskC = 10 };
+
+private:
+	const int rate;
+
+public:
+	ForeignSalesWorker(const char* _name, int _salary, double _ratio, const int _rate)
+		:SalesWorker(_name, _salary, _ratio), rate(_rate)
+	{
+	}
+
+	int GetRiskPay() const
+	{
+		return SalesWorker::GetPay() * (rate * 0.01);
+	}
+	int GetPay() const
+	{
+		return SalesWorker::GetPay() + GetRiskPay();
+	}
+
+	void ShowSalaryInfo() const
+	{
+		ShowYourName();
+		cout << "Salary: " << GetPay() << endl;
+		cout << "RiskPay: " << GetRiskPay() << endl;
+	}
+};
+
+class EmployeeHandler
+{					  // 컨트롤 클래스
+private:
+	Employee* empList[MAN];
+	int empNum;
+
+public:
+	EmployeeHandler()
+		: empNum(0)
+	{
+		empList[0] = 0;
+	}
+	void AddEmployee(Employee* p_emp) // 신규직원 추가
+	{
+		empList[empNum++] = p_emp;
+	}
+	void ShowAllSalaryInfo() const // 전체 급여 정보 출력
+	{
+		for (int i = 0; i < empNum; i++)
+		{
+			empList[i]->ShowSalaryInfo();
+			cout << endl;
+		}
+	}
+	void ShowTotalSalary() const
+	{
+		int sum = 0;
+		for (int i = 0; i < empNum; i++)
+			sum += empList[i]->GetPay();
+		cout << "Total Salary: " << sum << endl;
+	}
+	~EmployeeHandler()
+	{
+		for (int i = 0; i < empNum; i++)
+			delete empList[i];
+	}
+};
+int main(void)
+{
+	EmployeeHandler handler;
+	handler.AddEmployee(new PermanentWorker("리가현", 1000));
+	handler.AddEmployee(new PermanentWorker("리수진", 1500));
+	handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
+
+	SalesWorker* seller = new SalesWorker("리시현", 1000, 0.1);
+	seller->AddSalesResult(7000);
+	handler.AddEmployee(seller);
+
+	TemporaryWorker* alba = new TemporaryWorker("리강인", 700);
+	alba->AddWorkTime(5);
+	handler.AddEmployee(alba);
+
+	ForeignSalesWorker* fs1 = new ForeignSalesWorker("시홍렬1", 1000, 0.1, ForeignSalesWorker::RiskA);
+	fs1->AddSalesResult(7000);
+	handler.AddEmployee(fs1);
+	ForeignSalesWorker* fs2 = new ForeignSalesWorker("시홍렬2", 1000, 0.1, ForeignSalesWorker::RiskB);
+	fs2->AddSalesResult(7000);
+	handler.AddEmployee(fs2);
+	ForeignSalesWorker* fs3 = new ForeignSalesWorker("시홍렬3", 1000, 0.1, ForeignSalesWorker::RiskC);
+	fs3->AddSalesResult(7000);
+	handler.AddEmployee(fs3);
+
+	handler.ShowAllSalaryInfo();
+	handler.ShowTotalSalary();
+
+	return 0;
+}
+
