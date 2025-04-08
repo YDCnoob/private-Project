@@ -6,18 +6,15 @@ using namespace std;
 class Employee
 {
 private:
-	char* name;
+	char name[30];
 
 public:
 	Employee(const char* _name)
 	{
-		name = new char[strlen(_name) + 1];
-		strcpy_s(name, strlen(_name) + 1, _name);
+		strcpy_s(this->name, _name);
 	}
 
-	~Employee() { delete[] name; }
-
-	void ShowEmpInfo() const
+	void ShowYourName() const
 	{
 		cout << "name: " << name << endl;
 	}
@@ -42,22 +39,23 @@ public:
 
 	void ShowSalaryInfo() const
 	{
-		ShowEmpInfo();
+		ShowYourName();
 		cout << "Salary: " << GetPay() << endl;
 	}
 	~PermanentWorker() {}
 };
 
-class Sales : public PermanentWorker// 영업직 = 기본급여 + 인센티브
+class SalesWorker : public PermanentWorker// 영업직 = 기본급여 + 인센티브
 {
 private:
 	double ratio;
 	int incen;
 
 public:
-	Sales(const char* _name, int _salary, double _ratio)
+	SalesWorker(const char* _name, int _salary, double _ratio)
 		:PermanentWorker(_name, _salary), ratio(_ratio), incen(0)
 	{
+
 	}
 
 	void AddSalesResult(int n1)
@@ -72,19 +70,19 @@ public:
 
 	void ShowSalaryInfo() const
 	{
-		ShowEmpInfo();
+		ShowYourName();
 		cout << "salary: " << GetPay() << endl;
 	}
 };
 
-class Temporary : public Employee// 임시직 = 시급 * 근로시간 
+class TemporaryWorker : public Employee// 임시직 = 시급 * 근로시간 
 {
 private:
 	int payPerHour;
 	int WorkTime;
 
 public:
-	Temporary(const char* _name, int _pay)
+	TemporaryWorker(const char* _name, int _pay)
 		:Employee(_name), payPerHour(_pay), WorkTime(0)
 	{
 	}
@@ -94,14 +92,14 @@ public:
 		WorkTime = n1;
 	}
 
-	int GetPay()
+	int GetPay() const
 	{
 		return payPerHour * WorkTime;
 	}
 
-	void ShowSalaryInfo()
+	void ShowSalaryInfo() const
 	{
-		ShowEmpInfo();
+		ShowYourName();
 		cout << "Salary: " << GetPay() << endl;
 	}
 };
@@ -120,8 +118,8 @@ public:
 	}
 	void ShowAllSalaryInfo() // 전체 급여 정보 출력
 	{
-		/*for (int i = 0; i < empNum; i++)
-			emp[i]->ShowSalaryInfo();*/
+		//for (int i = 0; i < empNum; i++)
+			//emp[i]->ShowSalaryInfo();
 	}
 	void ShowTotalSalary()
 	{
@@ -143,12 +141,12 @@ int main(void)
 	Handler.AddEmployee(new PermanentWorker("리수진", 1500));
 	Handler.AddEmployee(new PermanentWorker("리홍렬", 2000));
 
-	Sales* seller = new Sales("리시현", 1000, 0.1);
+	SalesWorker* seller = new SalesWorker("리시현", 1000, 0.1);
 	seller->AddSalesResult(7000);
 	seller->ShowSalaryInfo();
 	Handler.AddEmployee(seller);
 
-	Temporary* Temp = new Temporary("리강인", 700);
+	TemporaryWorker* Temp = new TemporaryWorker("리강인", 700);
 	Temp->AddWorkTime(5);
 	Temp->ShowSalaryInfo();
 	Handler.AddEmployee(Temp);
@@ -158,3 +156,4 @@ int main(void)
 
 	return 0;
 }
+
