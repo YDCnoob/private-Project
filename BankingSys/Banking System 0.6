@@ -37,7 +37,7 @@ public:
     {
         return accID;
     }
-    void Deposit(int money)
+    virtual void Deposit(int money)
     {
         balance += money;
     }
@@ -74,15 +74,12 @@ private:
 public:
     NormalAccount(int id, const char* name, int bal, double rate)
         :Account(id, name, bal), interRate(rate)
-    {}
-    void Deposit()
     {
-
     }
-
-    double Balance()
+    void Deposit(int bal)
     {
-        return Account::GetBalance() * (interRate / 100.0);
+        Account::Deposit(bal);
+        Account::Deposit((bal * (interRate / 100.0)));
     }
 };
 
@@ -96,17 +93,16 @@ class HighCreditAccount : public NormalAccount // 신용신뢰계좌
 private:
     int specialRate;
 public:
-    HighCreditAccount(int id, const char* name, int bal, double rate, const int _rank) 
+    HighCreditAccount(int id, const char* name, int bal, double rate, const int _rank)
         :NormalAccount(id, name, bal, rate), specialRate(_rank)
-    {}
-    void Deposit()
     {
-
     }
-    double Balance()
+    void Deposit(int bal)
     {
-        NormalAccount::Balance() + (NormalAccount::Balance() * (specialRate / 100.0));
+        NormalAccount::Deposit(bal);
+        Account::Deposit(bal * (specialRate / 100.0));
     }
+    
 };
 
 class AccountHandler // 컨트롤(핸들러) 클래스
@@ -155,7 +151,7 @@ int main(void)
         switch (choice1)
         {
         case MAKE:
-            cout << "1. 보통예금 2. 신용신뢰예금"<< endl;
+            cout << "1. 보통예금 2. 신용신뢰예금" << endl;
             cout << "선택: ";
             cin >> choice2;
             switch (choice2)
@@ -299,3 +295,4 @@ void AccountHandler::ShowAllAccInfo()
     cout << "========== 계좌 확인 ==========" << endl;
     cout << endl;
 }
+
