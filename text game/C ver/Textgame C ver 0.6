@@ -228,7 +228,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         int damTomop;
         int damTochr;
 
-        printf("%s가 나타났다! 싸우겠습니까? (Y/n) ", mop[i].name);
+        printf("%s(이/가) 나타났다! 싸우겠습니까? (Y/n) ", mop[i].name);
         int key = _getch();
         fight = (key == 'n' || key == 'N') ? 'n' : 'y';  // 나머지는 다 'y'로 처리
 
@@ -263,7 +263,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                     printf("%d의 골드를 획득했다!\n", mop[i].reward_gold);
                     printf("\n");
                     textcolor(YELLOW);
-                    PrintCharacterStat(character);
+                    //PrintCharacterStat(character);
 
                     levelUp(character);
                     break;
@@ -274,12 +274,12 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 character->hp -= damTochr;
                 if (character->hp < 0) character->hp = 0;
                 
-                printf("%s가 %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
+                printf("%s(이/가) %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
                 Sleep(500);
                 printf("\n");
                 if (character->hp <= 0)
                 {
-                    printf("%s가 사망했습니다... 게임 오버!\n", character->name);
+                    printf("%s(이/가) 사망했습니다... 게임 오버!\n", character->name);
                     exit(0);
                 }
             }
@@ -287,7 +287,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         else
         {
             if (fight == 'n' || fight == 'N')
-                printf("%s(을)를 회피했습니다.. \n", mop[i].name);
+                printf("%s(을/를) 회피했습니다.. \n", mop[i].name);
         }
     }
 }
