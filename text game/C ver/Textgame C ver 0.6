@@ -64,8 +64,8 @@ typedef struct
 
 void CreateCharacter(CHARACTER* character);
 void PrintCharacterStat(CHARACTER* character);
-void gameLoop(CHARACTER* character, MOP* mop);
-int enterDungeon(int dun_lev);
+void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev);
+int enterDungeon(int* dun_lev);
 void fightmop(CHARACTER* character, MOP* mop, int dun_lev);
 void nextDun(int* dun_lev, MOP* mop, CHARACTER* character);
 void resetMop(MOP* mop, int difficulty, int isNight);
@@ -73,7 +73,7 @@ int calculateDamage(CHARACTER* character);
 void levelUp(CHARACTER* character);
 void promoteCharacter(CHARACTER* character);
 void textcolor(int colorNum); // 콘솔 출력 문장 색상 입히기
-void enterTown(CHARACTER* character);
+void enterTown(CHARACTER* character, int* dun_lev);
 void inn(CHARACTER* character);
 void blacksmith(CHARACTER* character);
 void upgrade_weapon(CHARACTER* character);
@@ -91,9 +91,11 @@ int main(void)
       {"고블린", 300, 300, 13, 13, 100, 40}
     };
 
+    int dun_lev = 1;
+
     CreateCharacter(&character);
-    enterTown(&character);
-    gameLoop(&character, &mop);
+    enterTown(&character, &dun_lev);
+    gameLoop(&character, mop, &dun_lev );
     return 0;
 }
 void CreateCharacter(CHARACTER* character)
@@ -193,26 +195,25 @@ void PrintCharacterStat(CHARACTER* character)
     printf("현재 시간대: %s \n", character->isNight ? "밤" : "낮");
     textcolor(WHITE);
 }
-void gameLoop(CHARACTER* character, MOP* mop)
+void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
 {
-    int dun_lev = 1;
-
     while (1)
     {
-        if (dun_lev % 5 == 0)
-            enterTown(character);
+        if (*dun_lev % 5 == 0)
+            enterTown(character, dun_lev);
         if (!enterDungeon(dun_lev))
         {
             printf("\n게임을 종료합니다.\n");
             break;
         }
-        fightmop(character, mop, dun_lev);
-        nextDun(&dun_lev, mop, character);
+        fightmop(character, mop, *dun_lev);
+        nextDun(dun_lev, mop, character);
     }
 }
-int enterDungeon(int dun_lev)
+int enterDungeon(int* dun_lev)
 {
     textcolor(WHITE);
+    printf("\n현재 던전 층: %d층\n", *dun_lev);
     printf("슬리피 던전 깊이 내려가는중.... (Press Any key...)\n");
     while (getchar() != '\n');
 
@@ -253,6 +254,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
               
                 if (mop[i].hp <= 0)
                 {
+                    textcolor(YELLOW);
                     printf("%s를 처치했다! \n", mop[i].name);
                     Sleep(500);
                     character->exp += mop[i].exp;
@@ -262,7 +264,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                     printf("\n");
                     printf("%d의 골드를 획득했다!\n", mop[i].reward_gold);
                     printf("\n");
-                    textcolor(YELLOW);
+                    textcolor(WHITE);
                     //PrintCharacterStat(character);
 
                     levelUp(character);
@@ -305,8 +307,9 @@ void nextDun(int* dun_lev, MOP* mop, CHARACTER* character)
     }
     else
     {
-        printf("게임을 종료합니다\n");
-        exit(0);
+        enterTown(character, dun_lev);
+        printf("마을로 귀환중... \n");
+        Sleep(1000);
     }
 }
 
@@ -472,10 +475,11 @@ void promoteCharacter(CHARACTER* character)
     PrintCharacterStat(character);
 }
 
-void enterTown(CHARACTER* character)
+void enterTown(CHARACTER* character, int* dun_lev)
 {
     int choice;
-    int dun_lev = 0;
+   
+    printf("\n현재 진행 중인 던전 층: %d층\n", *dun_lev);
 
     while (1)
     {
@@ -501,7 +505,6 @@ void enterTown(CHARACTER* character)
             blacksmith(character);
             break;
         case 3:
-            enterDungeon(dun_lev);
             return;
         case 4:
             PrintCharacterStat(character);
