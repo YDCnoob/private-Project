@@ -95,7 +95,7 @@ int main(void)
 
     CreateCharacter(&character);
     enterTown(&character, &dun_lev);
-    gameLoop(&character, mop, &dun_lev );
+    gameLoop(&character, mop, &dun_lev);
     return 0;
 }
 void CreateCharacter(CHARACTER* character)
@@ -251,7 +251,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 Sleep(500);
                 printf("\n");
                 waitForKeyPress();
-              
+
                 if (mop[i].hp <= 0)
                 {
                     textcolor(YELLOW);
@@ -275,7 +275,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 damTochr = mop[i].dam;
                 character->hp -= damTochr;
                 if (character->hp < 0) character->hp = 0;
-                
+
                 printf("%s(이/가) %s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, character->name, damTochr, character->hp);
                 Sleep(500);
                 printf("\n");
@@ -478,7 +478,7 @@ void promoteCharacter(CHARACTER* character)
 void enterTown(CHARACTER* character, int* dun_lev)
 {
     int choice;
-   
+
     printf("\n현재 진행 중인 던전 층: %d층\n", *dun_lev);
 
     while (1)
@@ -592,7 +592,7 @@ void upgrade_weapon(CHARACTER* character)
             {
                 character->weaponup++;
                 character->weapondmg++;
-                
+
                 printf("무기 강화 성공! 무기 데미지가 +1 증가했습니다.\n");
                 printf("\n");
                 if (character->gold <= 0)
@@ -652,3 +652,4 @@ void waitForKeyPress()
     }
     printf("\n");
 }
+
