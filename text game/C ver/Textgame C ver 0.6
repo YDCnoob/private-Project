@@ -214,7 +214,7 @@ int enterDungeon(int* dun_lev)
 {
     textcolor(WHITE);
     printf("\n현재 던전 층: %d층\n", *dun_lev);
-    printf("슬리피 던전 깊이 내려가는중.... (Press Any key...)\n");
+    printf("던전 깊은곳으로 내려가는중.... (Press Any key...)\n");
     while (getchar() != '\n');
 
     return 1;
@@ -265,7 +265,6 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                     printf("%d의 골드를 획득했다!\n", mop[i].reward_gold);
                     printf("\n");
                     textcolor(WHITE);
-                    //PrintCharacterStat(character);
 
                     levelUp(character);
                     break;
@@ -652,4 +651,5 @@ void waitForKeyPress()
     }
     printf("\n");
 }
+
 
