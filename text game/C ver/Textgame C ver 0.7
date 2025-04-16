@@ -4,7 +4,10 @@
 3. 코드 수정( 데미지 계산식, 몬스터 hp clamp 함수로 분리, 크리티컬 시스템 함수화)
 4. 마을에서 강화 시도 시 골드가 없어도 강화가 진행되는 현상 수정
 5. 누적 경험치 기능(레벨업에 필요한 100 경험치를 초과하는 부분 누적)
+6. 야간 전투 시 보상 증가( 경험치, 획득 골드 1.5배) -> 야간 전투 시 몬스터의 HP와 데미지 2.5배 증가에 따른 보상량 증가
+7. 몬스터 전체 수치 조정 및 캐릭터의 크리티컬 확률 계산식 변경
 ===================================================================================================
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -123,41 +126,42 @@ void CreateCharacter(CHARACTER* character)
 
     int choice;
     scanf_s("%d", &choice);
+    printf("\n");
     while (getchar() != '\n');
 
-    switch (choice)
+    switch (choice) // 각 전직 스탯 총합 30
     {
     case 1:
         strcpy_s(character->job, sizeof(character->job), "전사");
-        character->strength = 10;
+        character->strength = 15;
         character->agility = 5;
-        character->intelligence = 3;
-        character->luck = 2;
-        character->max_hp = 200;
+        character->intelligence = 4;
+        character->luck = 6;
+        character->max_hp = 250;
         break;
     case 2:
         strcpy_s(character->job, sizeof(character->job), "궁수");
-        character->strength = 5;
-        character->agility = 10;
-        character->intelligence = 4;
-        character->luck = 3;
-        character->max_hp = 180;
+        character->strength = 6;
+        character->agility = 15;
+        character->intelligence = 2;
+        character->luck = 7;
+        character->max_hp = 230;
         break;
     case 3:
         strcpy_s(character->job, sizeof(character->job), "마법사");
         character->strength = 3;
         character->agility = 4;
-        character->intelligence = 10;
-        character->luck = 3;
-        character->max_hp = 150;
+        character->intelligence = 16;
+        character->luck = 7;
+        character->max_hp = 180;
         break;
     case 4:
         strcpy_s(character->job, sizeof(character->job), "도적");
-        character->strength = 4;
-        character->agility = 5;
+        character->strength = 3;
+        character->agility = 8;
         character->intelligence = 4;
-        character->luck = 10;
-        character->max_hp = 170;
+        character->luck = 15;
+        character->max_hp = 210;
         break;
     default:
         printf("잘못된 선택입니다. 전사로 설정합니다.\n");
@@ -265,10 +269,10 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                     printf("%s를 처치했다! \n", mop[i].name);
                     Sleep(500);
                     character->exp += mop[i].exp;
-                    printf("\n");
+                    
                     printf("%d의 경험치를 획득했다!\n", mop[i].exp);
                     character->gold += mop[i].reward_gold;
-                    printf("\n");
+                   
                     printf("%d의 골드를 획득했다!\n", mop[i].reward_gold);
                     printf("\n");
                     textcolor(WHITE);
@@ -330,13 +334,15 @@ void resetMop(MOP* mop, int difficulty, int isNight)
     int i = 0;
     for (i = 0;i < 3;i++)
     {
-        mop[i].hp = mop[i].base_hp + difficulty * 20;
-        mop[i].dam = mop[i].basDam + difficulty * 2;
+        mop[i].hp = mop[i].base_hp + difficulty * 30;
+        mop[i].dam = mop[i].basDam + difficulty * 3;
 
         if (isNight)
         {
-            mop[i].hp = (int)(mop[i].hp * 1.2);
-            mop[i].dam = (int)(mop[i].dam * 1.2);
+            mop[i].hp = (int)(mop[i].hp * 2.5);
+            mop[i].dam = (int)(mop[i].dam * 2.5);
+            mop[i].exp = (int)(mop[i].exp * 1.5);            
+            mop[i].reward_gold = (int)(mop[i].reward_gold * 1.5);
         }
     }
 }
@@ -354,12 +360,12 @@ int calculateDamage(CHARACTER* character, int* isCrit)
 
     int damage = (int)(basdam * dammul);
 
-    int critChance = 5 + (int)(character->luck * 0.5);
+    int critChance = 5 + (int)(character->luck * 0.75);
     *isCrit = rand() % 100 < critChance;
 
     if (*isCrit)
     {
-        damage = (int)(damage * 1.2); // 크리티컬 데미지 증폭
+        damage = (int)(damage * 1.3); // 크리티컬 데미지 증폭
     }
 
     return damage;
@@ -602,8 +608,10 @@ void upgrade_weapon(CHARACTER* character)
     {
         printf("현재 소지 금액: %dG\n", character->gold);
         printf("골드가 부족합니다.\n");
+        printf("\n");
         return;
     }
+    
 
     int upgrade_success = rand() % 100;
     character->gold -= 50;
