@@ -3,7 +3,7 @@
 2. 크리티컬 히트 시스템 추가
 3. 코드 수정( 데미지 계산식, 몬스터 hp clamp 함수로 분리, 크리티컬 시스템 함수화)
 4. 마을에서 강화 시도 시 골드가 없어도 강화가 진행되는 현상 수정
-
+5. 누적 경험치 기능(레벨업에 필요한 100 경험치를 초과하는 부분 누적)
 ===================================================================================================
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,9 +91,9 @@ int main(void)
     CHARACTER character;
 
     MOP mop[3] =
-    { {"슬라임", 150, 150 , 5, 5, 40, 10},
-      {"임프", 250, 250, 10, 10, 60, 20},
-      {"고블린", 300, 300, 13, 13, 100, 40}
+    { {"슬라임", 150, 150 , 5, 5, 50, 10},
+      {"임프", 250, 250, 10, 10, 70, 20},
+      {"고블린", 300, 300, 13, 13, 130, 40}
     };
 
     int dun_lev = 1;
@@ -367,7 +367,7 @@ int calculateDamage(CHARACTER* character, int* isCrit)
 
 void levelUp(CHARACTER* character)
 {
-    if (character->exp >= 100)
+    while (character->exp >= 100)
     {
         character->level++;
         character->exp -= 100;
@@ -689,3 +689,4 @@ void waitForKeyPress()
     }
     printf("\n");
 }
+
