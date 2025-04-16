@@ -14,38 +14,26 @@
 
 #define MAX_SKILLS 3
 
-enum ColorType
-{
-    BLACK,  	    //0
-    darkBLUE,	    //1
-    DarkGreen,	    //2
-    darkSkyBlue,    //3
-    DarkRed,  	    //4
-    DarkPurple,	    //5
-    DarkYellow,	    //6
-    GRAY,		    //7
-    DarkGray,	    //8
-    BLUE,		    //9
-    GREEN,		    //10
-    SkyBlue,	    //11
-    RED,		    //12
-    PURPLE,		    //13
-    YELLOW,		    //14
-    WHITE		    //15
-
+enum ColorType {
+    BLACK, darkBLUE, DarkGreen, darkSkyBlue, DarkRed, DarkPurple, DarkYellow, GRAY,
+    DarkGray, BLUE, GREEN, SkyBlue, RED, PURPLE, YELLOW, WHITE
 } COLOR;
 
-typedef struct
-{
+// 구조체 전방 선언
+struct CHARACTER;
+struct MOP;
+
+typedef void (*SkillEffect)(struct CHARACTER*, struct MOP*);
+
+typedef struct {
     char name[30];
     char description[100];
     int mp_cost;
     double damage_multiplier;
-    void (*effect)(CHARACTER*, MOP*);
+    SkillEffect effect;
 } SKILL;
 
-typedef struct
-{
+typedef struct CHARACTER {
     char name[50];
     char job[20];
     int level;
@@ -59,12 +47,11 @@ typedef struct
     int gold;
     int weapondmg;
     int weaponup;
-    int isNight; // 낮(0) / 밤(1) 상태
+    int isNight;
     SKILL skills[MAX_SKILLS];
 } CHARACTER;
 
-typedef struct
-{
+typedef struct MOP {
     char name[50];
     int base_hp;
     int hp;
@@ -73,6 +60,20 @@ typedef struct
     int exp;
     int reward_gold;
 } MOP;
+
+// 함수 선언 (스킬과 주요 기능)
+void smash(CHARACTER* c, MOP* m);
+void shield_bash(CHARACTER* c, MOP* m);
+void rage_strike(CHARACTER* c, MOP* m);
+void rapid_shot(CHARACTER* c, MOP* m);
+void poison_arrow(CHARACTER* c, MOP* m);
+void critical_shot(CHARACTER* c, MOP* m);
+void fireball(CHARACTER* c, MOP* m);
+void ice_arrow(CHARACTER* c, MOP* m);
+void drain_life(CHARACTER* c, MOP* m);
+void shadow_strike(CHARACTER* c, MOP* m);
+void smoke_bomb(CHARACTER* c, MOP* m);
+void bleed(CHARACTER* c, MOP* m);
 
 void CreateCharacter(CHARACTER* character);
 void PrintCharacterStat(CHARACTER* character);
@@ -84,7 +85,7 @@ void resetMop(MOP* mop, int difficulty, int isNight);
 int calculateDamage(CHARACTER* character, int* isCrit);
 void levelUp(CHARACTER* character);
 void promoteCharacter(CHARACTER* character);
-void textcolor(int colorNum); // 콘솔 출력 문장 색상 입히기
+void textcolor(int colorNum);
 void enterTown(CHARACTER* character, int* dun_lev);
 void inn(CHARACTER* character);
 void blacksmith(CHARACTER* character);
@@ -92,7 +93,7 @@ void upgrade_weapon(CHARACTER* character);
 void waitForKeyPress();
 void printCritMessage(const char* attacker, const char* target, int isPlayer);
 int clampHP(int hp);
-int clampAndCheckDeath(int* hp); // 캐릭터의 생존 사망 여부 판단 가능
+int clampAndCheckDeath(int* hp);
 
 int main(void)
 {
@@ -329,7 +330,6 @@ int enterDungeon(int* dun_lev)
 }
 void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
 {
-
     int i = 0;
     for (i = 0;i < 3;i++)
     {
@@ -352,14 +352,25 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
             printf("\n");
             while (mop[i].hp > 0 && character->hp > 0)
             {
-                damTomop = calculateDamage(character, &isCrit);
-                if (isCrit)
-                    printCritMessage(character->name, mop[i].name, 1);
+                int skillChance = rand() % 100;
+                if (skillChance < 30) 
+                {
+                    int skillIndex = rand() % MAX_SKILLS;
+                    textcolor(SkyBlue);
+                    printf("스킬 발동! [%s] 사용!\n", character->skills[skillIndex].name);
+                    textcolor(WHITE);
+                    character->skills[skillIndex].effect(character, &mop[i]);
+                }
+                else 
+                {
+                    int damTomop = calculateDamage(character, &isCrit);
+                    if (isCrit)
+                        printCritMessage(character->name, mop[i].name, 1);
 
-                mop[i].hp -= damTomop;
-                mop[i].hp = clampHP(mop[i].hp);
-
-                printf("%s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, damTomop, mop[i].hp);
+                    mop[i].hp -= damTomop;
+                    mop[i].hp = clampHP(mop[i].hp);
+                    printf("%s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", mop[i].name, damTomop, mop[i].hp);
+                }
                 Sleep(300);
                
                 if (mop[i].hp <= 0)
@@ -408,6 +419,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         }
     }
 }
+
 void nextDun(int* dun_lev, MOP* mop, CHARACTER* character)
 {
     char next;
@@ -445,28 +457,22 @@ void resetMop(MOP* mop, int difficulty, int isNight)
         }
     }
 }
-int calculateDamage(CHARACTER* character, int* isCrit)
-{
+int calculateDamage(CHARACTER* character, int* isCrit) {
     int basdam = 5;
     double dammul = 1.0;
-
     dammul += sqrt(character->strength) * 1.2;
     dammul += sqrt(character->agility) * 1.0;
     dammul += sqrt(character->intelligence) * 0.8;
     dammul += sqrt(character->luck) * 1.4;
-
     dammul += character->weapondmg;
-
     int damage = (int)(basdam * dammul);
 
-    int critChance = 5 + (int)(character->luck * 0.75);
-    *isCrit = rand() % 100 < critChance;
-
-    if (*isCrit)
-    {
-        damage = (int)(damage * 1.3); // 크리티컬 데미지 증폭
+    if (isCrit != NULL) {
+        int critChance = 5 + (int)(character->luck * 0.75);
+        *isCrit = rand() % 100 < critChance;
+        if (*isCrit)
+            damage = (int)(damage * 1.3);
     }
-
     return damage;
 }
 
