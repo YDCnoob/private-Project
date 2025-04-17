@@ -712,54 +712,54 @@ void upgrade_weapon(CHARACTER* character)
     if (character->gold < 50)
     {
         printf("현재 소지 금액: %dG\n", character->gold);
-        printf("골드가 부족합니다.\n");
-        printf("\n");
+        printf("골드가 부족합니다. 강화할 수 없습니다.\n\n");
         return;
     }
-    
 
     int upgrade_success = rand() % 100;
-    character->gold -= 50;
 
     if (character->weaponup < 20)
     {
+        character->gold -= 50;  // 성공/실패 여부에 관계없이 강화 비용 선 차감
+
         if (character->weaponup < 10)
         {
             if (upgrade_success < 70)
             {
                 character->weaponup++;
                 character->weapondmg++;
-
-                printf("무기 강화 성공! 무기 데미지가 +1 증가했습니다.\n");
-                printf("\n");
+                printf("무기 강화 성공! 무기 데미지가 +1 증가했습니다.\n\n");
             }
             else
             {
-                printf("무기 강화 실패...\n");
+                printf("무기 강화 실패...\n\n");
             }
         }
         else
         {
             int chance = 50 - (character->weapondmg - 10) * 5;
-            if (chance < 5) chance = 5;  // 최소 확률 보장
+            if (chance < 5) chance = 5;
 
             if (upgrade_success < chance)
             {
                 character->weaponup++;
                 character->weapondmg += 2;
-                printf("무기 강화 성공! 무기 데미지가 +2 증가했습니다.\n");
+                printf("무기 강화 성공! 무기 데미지가 +2 증가했습니다.\n\n");
             }
             else
             {
-                character->gold -= 50;
                 printf("강화 실패... (남은 골드: %d)\n", character->gold);
-                if (character->gold <= 0)
+                if (character->gold < 50)
                 {
-                    printf("골드가 부족합니다.\n");
+                    printf("강화에 필요한 골드가 부족하여 더 이상 강화할 수 없습니다.\n\n");
                     return;
                 }
             }
         }
+    }
+    else
+    {
+        printf("무기 강화는 +20이 최대입니다.\n\n");
     }
 }
 
