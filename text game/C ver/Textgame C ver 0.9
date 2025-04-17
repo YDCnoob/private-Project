@@ -73,7 +73,9 @@ typedef struct MOP {
     int hp;
     int basDam;
     int dam;
+    int base_exp;
     int exp;
+    int base_gold;
     int reward_gold;
 } MOP;
 
@@ -461,14 +463,14 @@ void resetMop(MOP* mop, int difficulty, int isNight)
 
     for (i = 0;i < 3;i++)
     {
-        mop[i].hp = mop[i].base_hp + difficulty * 30;
-        mop[i].dam = mop[i].basDam + difficulty * 3;
+        mop[i].exp = mop[i].base_exp;
+        mop[i].reward_gold = mop[i].base_gold;
 
-        if (isNight==1)
+        if (isNight == 1)
         {
             mop[i].hp = (int)(mop[i].hp * 2.5);
             mop[i].dam = (int)(mop[i].dam * 2.5);
-            mop[i].exp = (int)(mop[i].exp * 2.0);            
+            mop[i].exp = (int)(mop[i].exp * 2.0);
             mop[i].reward_gold = (int)(mop[i].reward_gold * 2.0);
         }
     }
