@@ -14,6 +14,10 @@
 #include <conio.h>
 
 #define MAX_SKILLS 3
+#define NIGHT_HP_MULT 2.5
+#define NIGHT_DAM_MULT 2.5
+#define NIGHT_EXP_MULT 2.0
+#define NIGHT_GOLD_MULT 2.0
 
 enum ColorType 
 {
@@ -471,10 +475,10 @@ void resetMop(MOP* mop, int difficulty, int isNight)
 
         if (isNight == 1)
         {
-            mop[i].hp = (int)(mop[i].hp * 2.5);
-            mop[i].dam = (int)(mop[i].dam * 2.5);
-            mop[i].exp = (int)(mop[i].exp * 2.0);
-            mop[i].reward_gold = (int)(mop[i].reward_gold * 2.0);
+            mop[i].hp = (int)(mop[i].hp * NIGHT_HP_MULT);
+            mop[i].dam = (int)(mop[i].dam * NIGHT_DAM_MULT);
+            mop[i].exp = (int)(mop[i].exp * NIGHT_EXP_MULT);
+            mop[i].reward_gold = (int)(mop[i].reward_gold * NIGHT_GOLD_MULT);
         }
     }
 }
@@ -930,4 +934,5 @@ void bleed(CHARACTER* c, MOP* m)
     m->hp = clampHP(m->hp);
     printf("[치명 상처] %s에게 %d 데미지를 입혔습니다! (출혈 효과)\n", m->name, damage);
 }
+
 
