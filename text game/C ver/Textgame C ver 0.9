@@ -913,7 +913,8 @@ void drain_life(CHARACTER* c, MOP* m)
     printf("[체력 흡수] %s에게 %d 데미지를 입히고 %d 체력을 회복했습니다!\n", m->name, damage, heal);
 }
 
-void shadow_strike(CHARACTER* c, MOP* m) {
+void shadow_strike(CHARACTER* c, MOP* m) 
+{
     int isCrit = rand() % 100 < 70;
     int damage = calculateDamage(c, NULL);
     if (isCrit) damage = (int)(damage * 1.2);
