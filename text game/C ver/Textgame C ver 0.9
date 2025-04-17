@@ -449,7 +449,7 @@ void nextDun(int* dun_lev, MOP* mop, CHARACTER* character)
     else
     {
         enterTown(character, dun_lev);
-        printf("마을로 귀환중... \n");
+        printf("귀환중... \n");
         Sleep(300);
     }
 }
@@ -457,6 +457,8 @@ void nextDun(int* dun_lev, MOP* mop, CHARACTER* character)
 void resetMop(MOP* mop, int difficulty, int isNight)
 {
     int i = 0;
+    int effective_difficulty = (difficulty > 50) ? 50 : difficulty;
+
     for (i = 0;i < 3;i++)
     {
         mop[i].hp = mop[i].base_hp + difficulty * 30;
@@ -922,4 +924,3 @@ void bleed(CHARACTER* c, MOP* m)
     m->hp = clampHP(m->hp);
     printf("[치명 상처] %s에게 %d 데미지를 입혔습니다! (출혈 효과)\n", m->name, damage);
 }
-
