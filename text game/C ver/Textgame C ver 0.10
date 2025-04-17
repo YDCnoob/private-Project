@@ -12,8 +12,8 @@
 #include <conio.h>
 
 #define MAX_SKILLS 3
-#define NIGHT_HP_MULT 2.5
-#define NIGHT_DAM_MULT 2.5
+#define NIGHT_HP_MULT 1.5
+#define NIGHT_DAM_MULT 1.8
 #define NIGHT_EXP_MULT 2.0
 #define NIGHT_GOLD_MULT 2.0
 
@@ -90,11 +90,17 @@ typedef struct MOP
     int reward_gold;
 
     // 상태이상 관련
-    int isPoisoned;        // 중독
-    int isFrozen;          // 빙결 (속도 감소, 다음 턴 행동 제한 등)
-    int isBleeding;        // 출혈
-    int isStunned;         // 기절
-    int statusDuration;    // 상태 이상 지속 턴 수
+    int isPoisoned;
+    int poisonTurns;
+
+    int isBleeding;
+    int bleedTurns;
+
+    int isStunned;
+    int stunTurns;
+
+    int isFrozen;
+    int freezeTurns;
 
 } MOP;
 
@@ -112,11 +118,14 @@ void shadow_strike(CHARACTER* c, MOP* m);
 void smoke_bomb(CHARACTER* c, MOP* m);
 void bleed(CHARACTER* c, MOP* m);
 
+// 상태 이상 함수 선언
+void applyStatusEffects(MOP* m);
+
 // 주요 기능 함수 선언
 void CreateCharacter(CHARACTER* character);
 void PrintCharacterStat(CHARACTER* character);
 void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev);
-int enterDungeon(int* dun_lev);
+int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop);
 void fightmop(CHARACTER* character, MOP* mop, int dun_lev);
 void nextDun(int* dun_lev, MOP* mop, CHARACTER* character);
 void resetMop(MOP* mop, int difficulty, int isNight);
@@ -140,9 +149,9 @@ int main(void)
     CHARACTER character;
 
     MOP mop[3] =
-    { {"슬라임", 150, 150 , 5, 5, 30, 30, 50, 50},
-        {"임프", 250, 250, 10, 10, 40, 40, 70, 70},
-        {"고블린", 300, 300, 13, 13, 70, 70, 90, 90}
+    { {"슬라임", 150, 150 , 50, 50, 30, 30, 50, 50},
+        {"임프", 250, 250, 70, 70, 40, 40, 70, 70},
+        {"고블린", 300, 300, 100, 100, 70, 70, 90, 90}
     };
 
     int dun_lev = 1;
@@ -361,7 +370,7 @@ void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
 {
     while (1)
     {
-        if (!enterDungeon(dun_lev))
+        if (!enterDungeon(character, mop, dun_lev))
         {
             printf("\n게임을 종료합니다.\n");
             break;
@@ -370,8 +379,11 @@ void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
         nextDun(dun_lev, mop, character);
     }
 }
-int enterDungeon(int* dun_lev)
+int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop)
 {
+
+    resetMop(mop, *dun_lev, character->isNight);
+
     textcolor(WHITE);
     printf("\n현재 던전 층: %d층\n", *dun_lev);
     printf("던전 깊은곳으로 내려가는중.... (Press Any key...)\n");
@@ -932,7 +944,7 @@ void poison_arrow(CHARACTER* c, MOP* m)
     m->hp -= damage;
     m->hp = clampHP(m->hp);
     m->isPoisoned = 1;
-    m->statusDuration = 3;
+    m->poisonTurns = 3;
     printf("[독화살] %s에게 %d 데미지를 입혔습니다! (중독 효과 - 3턴 지속)\n", m->name, damage);
 }
 
@@ -995,38 +1007,42 @@ void bleed(CHARACTER* c, MOP* m)
     m->hp -= damage;
     m->hp = clampHP(m->hp);
     m->isBleeding = 1;
-    m->statusDuration = 3;
+    m->bleedTurns = 3;
     printf("[치명 상처] %s에게 %d 데미지를 입혔습니다! (출혈 효과 - 3턴 지속)\n", m->name, damage);
 }
 
-void applyStatusEffects(MOP* m) 
+void applyStatusEffects(MOP* m)
 {
-    if (m->statusDuration > 0) 
+    if (m->isPoisoned && m->poisonTurns > 0) 
     {
-        if (m->isPoisoned) 
-        {
-            int poisonDmg = 5;
-            m->hp -= poisonDmg;
-            m->hp = clampHP(m->hp);
-            printf(">> %s는 중독 상태로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, poisonDmg, m->hp);
-        }
-        if (m->isBleeding) 
-        {
-            int bleedDmg = 7;
-            m->hp -= bleedDmg;
-            m->hp = clampHP(m->hp);
-            printf(">> %s는 출혈로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, bleedDmg, m->hp);
-        }
+        int poisonDmg = 5;
+        m->hp -= poisonDmg;
+        m->hp = clampHP(m->hp);
+        printf(">> %s는 중독 상태로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, poisonDmg, m->hp);
+        m->poisonTurns--;
 
-        m->statusDuration--;
-
-        if (m->statusDuration <= 0) 
+        if (m->poisonTurns == 0) 
         {
             m->isPoisoned = 0;
-            m->isFrozen = 0;
-            m->isBleeding = 0;
-            m->isStunned = 0;
-            printf(">> %s의 상태 이상이 모두 해제되었습니다.\n", m->name);
+            printf(">> %s의 중독이 해제되었습니다.\n", m->name);
         }
     }
+
+    if (m->isBleeding && m->bleedTurns > 0) 
+    {
+        int bleedDmg = 7;
+        m->hp -= bleedDmg;
+        m->hp = clampHP(m->hp);
+        printf(">> %s는 출혈로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, bleedDmg, m->hp);
+        m->bleedTurns--;
+
+        if (m->bleedTurns == 0) 
+        {
+            m->isBleeding = 0;
+            printf(">> %s의 출혈이 멈췄습니다.\n", m->name);
+        }
+    }
+
+    // 기절이나 빙결 등도 마찬가지로...
 }
+
