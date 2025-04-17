@@ -461,8 +461,11 @@ void resetMop(MOP* mop, int difficulty, int isNight)
     int i = 0;
     int effective_difficulty = (difficulty > 50) ? 50 : difficulty;
 
-    for (i = 0;i < 3;i++)
+    for (i = 0; i < 3; i++)
     {
+        // 매번 base 값으로 초기화
+        mop[i].hp = mop[i].base_hp + effective_difficulty * 30;
+        mop[i].dam = mop[i].basDam + effective_difficulty * 3;
         mop[i].exp = mop[i].base_exp;
         mop[i].reward_gold = mop[i].base_gold;
 
@@ -475,6 +478,7 @@ void resetMop(MOP* mop, int difficulty, int isNight)
         }
     }
 }
+
 int calculateDamage(CHARACTER* character, int* isCrit) 
 {
     int base = 5;
@@ -926,3 +930,4 @@ void bleed(CHARACTER* c, MOP* m)
     m->hp = clampHP(m->hp);
     printf("[치명 상처] %s에게 %d 데미지를 입혔습니다! (출혈 효과)\n", m->name, damage);
 }
+
