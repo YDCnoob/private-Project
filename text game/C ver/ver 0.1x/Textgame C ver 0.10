@@ -368,10 +368,10 @@ void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
 int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop)
 {
 
-    resetMop(mop, *dun_lev, character->isNight);
+    resetMop(mop, dun_lev, character->isNight);
 
     textcolor(WHITE);
-    //printf("\n현재 던전 층: %d층\n", *dun_lev);
+    
     printf("던전 깊은곳으로 내려가는중.... (Press Any key...)\n");
     _getch();
 
