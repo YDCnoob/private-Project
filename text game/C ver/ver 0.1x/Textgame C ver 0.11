@@ -38,7 +38,6 @@ enum ColorType
     WHITE
 } COLOR;
 
-// 구조체 전방 선언
 struct CHARACTER;
 struct MOP;
 
@@ -72,8 +71,8 @@ typedef struct CHARACTER
     int isNight;
     SKILL skills[MAX_SKILLS];
 
-    int defense;        // 방어력
-    int evasion;        // 회피율 (0~100%)
+    int defense;    
+    int evasion;      
     int evadeTurns;
 
 } CHARACTER;
@@ -189,7 +188,7 @@ void CreateCharacter(CHARACTER* character)
     printf("\n");
     while (getchar() != '\n');
 
-    switch (choice) // 각 전직 스탯 총합 30
+    switch (choice)
     {
     case 1:
         strcpy_s(character->job, sizeof(character->job), "전사");
@@ -393,7 +392,7 @@ void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
         {
             resetBoss(&boss, *dun_lev, character->isNight);
             printf("\n※ 보스 층입니다! 강력한 %s이(가) 기다리고 있습니다! ※\n", boss.name);
-            fightBoss(character, &boss, *dun_lev);  // ✅ 변경된 부분
+            fightBoss(character, &boss, *dun_lev);
         }
         else
         {
@@ -437,7 +436,6 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         {
             applyStatusEffects(&mop[i]);
 
-            // 스킬 발동 -> 전투 중 30% 확률로 스킬이 랜덤하게 발동
             int skillChance = rand() % 100;
             if (skillChance < 30)
             {
@@ -461,7 +459,6 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 Sleep(300);
             }
 
-            //기본 공격 -> 행운 수치에 따른 크리티컬 확률 추가
             int isCrit = 0;
             int damToMob = calculateDamage(character, &isCrit);
             if (isCrit)
@@ -473,7 +470,6 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 mop[i].name, damToMob, mop[i].hp);
             Sleep(300);
 
-            // 몬스터 사망 체크
             if (mop[i].hp <= 0)
             {
                 textcolor(YELLOW);
@@ -488,12 +484,11 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 break;
             }
 
-            // 몬스터 공격 -> 얘도 일정 확률로 크리티컬 공격
             int mobCrit = rand() % 100 < 10;
             double critMultiplier = mobCrit ? 1.2 : 1.0;
 
-            int rawDamage = (int)(mop[i].dam * critMultiplier);  // 크리티컬 반영
-            int damToChr = rawDamage - character->defense;       // 방어력 적용
+            int rawDamage = (int)(mop[i].dam * critMultiplier); 
+            int damToChr = rawDamage - character->defense;
             if (damToChr < 0) damToChr = 0;
 
             if (character->evadeTurns > 0)
@@ -559,7 +554,6 @@ void resetMop(MOP* mop, int difficulty, int isNight)
 
     for (i = 0; i < 3; i++)
     {
-        // 매번 base 값으로 초기화
         mop[i].hp = mop[i].base_hp + effective_difficulty * 30;
         mop[i].dam = mop[i].basDam + effective_difficulty * 3;
         mop[i].exp = mop[i].base_exp;
@@ -623,10 +617,9 @@ void levelUp(CHARACTER* character)
         printf("스탯이 상승했습니다!\n");
         PrintCharacterStat(character);
 
-        // 레벨 20 또는 40에 도달했을 때 전직
         if (character->level == 20 || character->level == 40)
         {
-            waitForKeyPress();  // (선택) 메시지 지나감 방지
+            waitForKeyPress();
             promoteCharacter(character);
         }
     }
@@ -797,11 +790,11 @@ void inn(CHARACTER* character)
     {
         Sleep(500);
         character->isNight = !(character->isNight);
-        if (character->isNight) // isNight가 1일때
+        if (character->isNight)
         {
             printf("밤이 깊었습니다.. 던전의 몬스터들은 더욱 흉포해졌습니다..\n");
         }
-        else // isNight가 0일때
+        else
         {
             printf("낮이 되었습니다. 던전의 몬스터들은 원래대로 돌아왔습니다.\n");
         }
@@ -846,7 +839,7 @@ void upgrade_weapon(CHARACTER* character)
 
     if (character->weaponup < 20)
     {
-        character->gold -= 50;  // 성공/실패 여부에 관계없이 강화 비용 선 차감
+        character->gold -= 50;
 
         if (character->weaponup < 10)
         {
@@ -911,9 +904,9 @@ int clampAndCheckDeath(int* hp)
     if (*hp <= 0)
     {
         *hp = 0;
-        return 1;  // 사망
+        return 1;
     }
-    return 0;  // 생존
+    return 0;
 }
 
 void waitForKeyPress()
@@ -923,7 +916,7 @@ void waitForKeyPress()
     while (1)
     {
         int key = _getch();
-        if (key == ' ' || key == 13)  // Space 또는 Enter
+        if (key == ' ' || key == 13)
             break;
     }
     printf("\n");
@@ -1121,7 +1114,6 @@ void fightBoss(CHARACTER* character, MOP* boss, int dun_lev)
     {
         applyStatusEffects(boss);
 
-        // 스킬 발동
         int skillChance = rand() % 100;
         if (skillChance < 30)
         {
@@ -1145,7 +1137,6 @@ void fightBoss(CHARACTER* character, MOP* boss, int dun_lev)
             Sleep(300);
         }
 
-        // 기본 공격
         int isCrit = 0;
         int damToBoss = calculateDamage(character, &isCrit);
         if (isCrit)
@@ -1170,7 +1161,6 @@ void fightBoss(CHARACTER* character, MOP* boss, int dun_lev)
             break;
         }
 
-        // 몬스터 공격
         int mobCrit = rand() % 100 < 10;
         double critMultiplier = mobCrit ? 1.2 : 1.0;
         int rawDamage = (int)(boss->dam * critMultiplier);
