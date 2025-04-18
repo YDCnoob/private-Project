@@ -313,11 +313,31 @@ void CreateCharacter(CHARACTER* character)
     default:
         printf("잘못된 선택입니다. 전사로 설정합니다.\n");
         strcpy_s(character->job, sizeof(character->job), "전사");
-        character->strength = 10;
+        character->strength = 15;
         character->agility = 5;
-        character->intelligence = 3;
-        character->luck = 2;
-        character->max_hp = 120;
+        character->intelligence = 4;
+        character->luck = 6;
+        character->max_hp = 250;
+        strcpy_s(character->skills[0].name, 30, "강타");
+        strcpy_s(character->skills[0].description, 100, "힘을 담아 적을 강하게 내려칩니다.");
+        character->skills[0].mp_cost = 0;
+        character->skills[0].damage_multiplier = 1.2;
+        character->skills[0].effect = smash;
+
+        strcpy_s(character->skills[1].name, 30, "방패 밀치기");
+        strcpy_s(character->skills[1].description, 100, "적을 밀쳐 데미지와 기절을 입힙니다.");
+        character->skills[1].mp_cost = 0;
+        character->skills[1].damage_multiplier = 1.0;
+        character->skills[1].effect = shield_bash;
+
+        strcpy_s(character->skills[2].name, 30, "분노의 일격");
+        strcpy_s(character->skills[2].description, 100, "잃은 체력에 비례해 추가 데미지를 줍니다.");
+        character->skills[2].mp_cost = 0;
+        character->skills[2].damage_multiplier = 1.0;
+        character->skills[2].effect = rage_strike;
+
+        character->defense = 40;
+        character->evasion = 10;
     }
 
     character->level = 1;
