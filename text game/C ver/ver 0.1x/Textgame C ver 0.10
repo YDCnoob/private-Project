@@ -17,23 +17,23 @@
 #define NIGHT_EXP_MULT 2.0
 #define NIGHT_GOLD_MULT 2.0
 
-enum ColorType 
+enum ColorType
 {
-    BLACK, 
-    darkBLUE, 
-    DarkGreen, 
-    darkSkyBlue, 
-    DarkRed, 
-    DarkPurple, 
-    DarkYellow, 
+    BLACK,
+    darkBLUE,
+    DarkGreen,
+    darkSkyBlue,
+    DarkRed,
+    DarkPurple,
+    DarkYellow,
     GRAY,
     DarkGray,
-    BLUE, 
-    GREEN, 
-    SkyBlue, 
-    RED, 
-    PURPLE, 
-    YELLOW, 
+    BLUE,
+    GREEN,
+    SkyBlue,
+    RED,
+    PURPLE,
+    YELLOW,
     WHITE
 } COLOR;
 
@@ -43,7 +43,7 @@ struct MOP;
 
 typedef void (*SkillEffect)(struct CHARACTER*, struct MOP*);
 
-typedef struct 
+typedef struct
 {
     char name[30];
     char description[100];
@@ -53,7 +53,7 @@ typedef struct
 
 } SKILL;
 
-typedef struct CHARACTER 
+typedef struct CHARACTER
 {
     char name[50];
     char job[20];
@@ -77,7 +77,7 @@ typedef struct CHARACTER
 
 } CHARACTER;
 
-typedef struct MOP 
+typedef struct MOP
 {
     char name[50];
     int base_hp;
@@ -216,7 +216,7 @@ void CreateCharacter(CHARACTER* character)
         character->evasion = 10;
 
         break;
-    
+
     case 2:
         strcpy_s(character->job, sizeof(character->job), "궁수");
         character->strength = 6;
@@ -245,17 +245,10 @@ void CreateCharacter(CHARACTER* character)
 
         character->defense = 10;
         character->evasion = 30;
-      
+
         break;
 
     case 3:
-        strcpy_s(character->job, sizeof(character->job), "마법사");
-        character->strength = 3;
-        character->agility = 4;
-        character->intelligence = 16;
-        character->luck = 7;
-        character->max_hp = 180;
-
         strcpy_s(character->job, sizeof(character->job), "마법사");
         character->strength = 3;
         character->agility = 4;
@@ -287,13 +280,6 @@ void CreateCharacter(CHARACTER* character)
         break;
 
     case 4:
-        strcpy_s(character->job, sizeof(character->job), "도적");
-        character->strength = 3;
-        character->agility = 8;
-        character->intelligence = 4;
-        character->luck = 15;
-        character->max_hp = 210;
-
         strcpy_s(character->job, sizeof(character->job), "도적");
         character->strength = 3;
         character->agility = 8;
@@ -400,7 +386,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
         textcolor(WHITE);
         char choice = _getch();
         printf("\n");
-        if (choice == 'n' || choice == 'N') 
+        if (choice == 'n' || choice == 'N')
         {
             printf("%s(을/를) 회피했습니다..\n", mop[i].name);
             continue;
@@ -414,7 +400,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
 
             // 스킬 발동 -> 전투 중 30% 확률로 스킬이 랜덤하게 발동
             int skillChance = rand() % 100;
-            if (skillChance < 30) 
+            if (skillChance < 30)
             {
                 int idx = rand() % MAX_SKILLS;
                 SKILL* sk = &character->skills[idx];
@@ -449,7 +435,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
             Sleep(300);
 
             // 몬스터 사망 체크
-            if (mop[i].hp <= 0) 
+            if (mop[i].hp <= 0)
             {
                 textcolor(YELLOW);
                 printf("\n%s를 처치했다!\n", mop[i].name);
@@ -471,7 +457,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
             int damToChr = rawDamage - character->defense;       // 방어력 적용
             if (damToChr < 0) damToChr = 0;
 
-            if (character->evadeTurns > 0) 
+            if (character->evadeTurns > 0)
             {
                 character->evadeTurns--;
                 textcolor(GREEN);
@@ -498,7 +484,7 @@ void fightmop(CHARACTER* character, MOP* mop, int dun_lev)
                 mop[i].name, character->name, damToChr, character->hp);
             Sleep(500);
 
-            if (clampAndCheckDeath(&character->hp)) 
+            if (clampAndCheckDeath(&character->hp))
             {
                 printf("%s(이/가) 사망했습니다... 게임 오버!\n", character->name);
                 exit(0);
@@ -550,7 +536,7 @@ void resetMop(MOP* mop, int difficulty, int isNight)
     }
 }
 
-int calculateDamage(CHARACTER* character, int* isCrit) 
+int calculateDamage(CHARACTER* character, int* isCrit)
 {
     int base = 5;
     double mul = 1.0
@@ -561,7 +547,7 @@ int calculateDamage(CHARACTER* character, int* isCrit)
         + character->weapondmg;
     int damage = (int)(base * mul);
 
-    if (isCrit) 
+    if (isCrit)
     {
         int chance = 5 + (int)(character->luck * 0.75);
         *isCrit = (rand() % 100) < chance;
@@ -900,7 +886,7 @@ void waitForKeyPress()
     printf("\n");
 }
 
-void smash(CHARACTER* c, MOP* m) 
+void smash(CHARACTER* c, MOP* m)
 {
     int isCrit = 0;
     int damage = (int)(calculateDamage(c, &isCrit) * 1.2);
@@ -909,7 +895,7 @@ void smash(CHARACTER* c, MOP* m)
     printf("[강타] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void shield_bash(CHARACTER* c, MOP* m) 
+void shield_bash(CHARACTER* c, MOP* m)
 {
     int damage = (int)(calculateDamage(c, NULL) * 1.0);
     m->hp -= damage;
@@ -917,7 +903,7 @@ void shield_bash(CHARACTER* c, MOP* m)
     printf("[방패 밀치기] %s에게 %d 데미지를 입혔습니다! (기절 효과)\n", m->name, damage);
 }
 
-void rage_strike(CHARACTER* c, MOP* m) 
+void rage_strike(CHARACTER* c, MOP* m)
 {
     int missing_hp = c->max_hp - c->hp;
     int bonus = (int)(missing_hp * 0.2);
@@ -927,9 +913,9 @@ void rage_strike(CHARACTER* c, MOP* m)
     printf("[분노의 일격] %s에게 %d 데미지를 입혔습니다! (보너스 %d)\n", m->name, damage, bonus);
 }
 
-void rapid_shot(CHARACTER* c, MOP* m) 
+void rapid_shot(CHARACTER* c, MOP* m)
 {
-    for (int i = 0; i < 2; i++) 
+    for (int i = 0; i < 2; i++)
     {
         int damage = (int)(calculateDamage(c, NULL) * 0.7);
         m->hp -= damage;
@@ -948,7 +934,7 @@ void poison_arrow(CHARACTER* c, MOP* m)
     printf("[독화살] %s에게 %d 데미지를 입혔습니다! (중독 효과 - 3턴 지속)\n", m->name, damage);
 }
 
-void critical_shot(CHARACTER* c, MOP* m) 
+void critical_shot(CHARACTER* c, MOP* m)
 {
     int isCrit = rand() % 100 < 80;
     int damage = calculateDamage(c, NULL);
@@ -958,7 +944,7 @@ void critical_shot(CHARACTER* c, MOP* m)
     printf("[치명 사격] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void fireball(CHARACTER* c, MOP* m) 
+void fireball(CHARACTER* c, MOP* m)
 {
     int damage = (int)(calculateDamage(c, NULL) * 1.5);
     m->hp -= damage;
@@ -966,7 +952,7 @@ void fireball(CHARACTER* c, MOP* m)
     printf("[파이어볼] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void ice_arrow(CHARACTER* c, MOP* m) 
+void ice_arrow(CHARACTER* c, MOP* m)
 {
     int damage = calculateDamage(c, NULL);
     m->hp -= damage;
@@ -974,7 +960,7 @@ void ice_arrow(CHARACTER* c, MOP* m)
     printf("[얼음 화살] %s에게 %d 데미지를 입혔습니다! (속도 감소 효과)\n", m->name, damage);
 }
 
-void drain_life(CHARACTER* c, MOP* m) 
+void drain_life(CHARACTER* c, MOP* m)
 {
     int damage = (int)(calculateDamage(c, NULL) * 1.0);
     int heal = damage / 2;
@@ -985,7 +971,7 @@ void drain_life(CHARACTER* c, MOP* m)
     printf("[체력 흡수] %s에게 %d 데미지를 입히고 %d 체력을 회복했습니다!\n", m->name, damage, heal);
 }
 
-void shadow_strike(CHARACTER* c, MOP* m) 
+void shadow_strike(CHARACTER* c, MOP* m)
 {
     int isCrit = rand() % 100 < 70;
     int damage = calculateDamage(c, NULL);
@@ -995,7 +981,7 @@ void shadow_strike(CHARACTER* c, MOP* m)
     printf("[그림자 일격] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void smoke_bomb(CHARACTER* c, MOP* m) 
+void smoke_bomb(CHARACTER* c, MOP* m)
 {
     c->evadeTurns = 2;
     printf("[연막] %s가 2턴 동안 모든 공격을 회피합니다!\n", c->name);
@@ -1013,7 +999,7 @@ void bleed(CHARACTER* c, MOP* m)
 
 void applyStatusEffects(MOP* m)
 {
-    if (m->isPoisoned && m->poisonTurns > 0) 
+    if (m->isPoisoned && m->poisonTurns > 0)
     {
         int poisonDmg = 5;
         m->hp -= poisonDmg;
@@ -1021,14 +1007,14 @@ void applyStatusEffects(MOP* m)
         printf(">> %s는 중독 상태로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, poisonDmg, m->hp);
         m->poisonTurns--;
 
-        if (m->poisonTurns == 0) 
+        if (m->poisonTurns == 0)
         {
             m->isPoisoned = 0;
             printf(">> %s의 중독이 해제되었습니다.\n", m->name);
         }
-    } 
+    }
 
-    if (m->isBleeding && m->bleedTurns > 0) 
+    if (m->isBleeding && m->bleedTurns > 0)
     {
         int bleedDmg = 7;
         m->hp -= bleedDmg;
@@ -1036,7 +1022,7 @@ void applyStatusEffects(MOP* m)
         printf(">> %s는 출혈로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, bleedDmg, m->hp);
         m->bleedTurns--;
 
-        if (m->bleedTurns == 0) 
+        if (m->bleedTurns == 0)
         {
             m->isBleeding = 0;
             printf(">> %s의 출혈이 멈췄습니다.\n", m->name);
