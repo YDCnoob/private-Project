@@ -806,7 +806,8 @@ void blacksmith(CHARACTER* character)
         printf("현재 무기 데미지: %d\n", character->weapondmg);
         printf("무기 강화 상태: +%d\n", character->weaponup);
     }
-    else {
+    else 
+    {
         printf("잘못된 선택입니다.\n");
     }
 }
@@ -1049,5 +1050,5 @@ void applyStatusEffects(MOP* m)
         }
     }
 
-    // 기절이나 빙결 등도 마찬가지로...
+    // 기절 빙결 추후 추가 예정
 }
