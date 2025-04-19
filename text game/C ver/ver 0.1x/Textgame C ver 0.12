@@ -247,7 +247,7 @@ void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
 
     while (1)
     {
-        if (!enterDungeon(character, mop, dun_lev))
+        if (!enterDungeon(dun_lev, character, mop))
         {
             printf("\n게임을 종료합니다.\n");
             break;
@@ -271,12 +271,12 @@ void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
 int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop)
 {
 
-    resetMop(mop, dun_lev, character->isNight);
+    resetMop(mop, *dun_lev, character->isNight);
 
     textcolor(WHITE);
 
     printf("던전 깊은곳으로 내려가는중.... (Press Any key...)\n");
-    _getch();
+    (void)_getch();
 
     return 1;
 }
@@ -610,7 +610,7 @@ void enterTown(CHARACTER* character, int* dun_lev)
 
         while (scanf_s("%d", &choice) != 1 || choice < 1 || choice > 5)
         {
-            getchar();
+            (void)getchar();
             printf("잘못된 선택입니다. 다시 입력해주세요: ");
         }
 
@@ -644,7 +644,7 @@ void inn(CHARACTER* character)
     printf("2. 시간 변경 (낮/밤)\n");
     printf("선택: ");
     scanf_s("%d", &choice);
-    getchar();
+    (void)getchar();
 
     if (choice == 1)
     {
