@@ -1,3 +1,6 @@
+1. C++ 포팅
+2. 파일 분할 
+
 /****** INCLUDES ******/
 #include <stdio.h>
 #include <stdlib.h>
