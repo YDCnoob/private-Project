@@ -21,8 +21,7 @@
 #define MAX_SLOT 10
 
 /****** global variable & structs ******/
-enum ColorType
-{
+enum ColorType {
     BLACK,
     darkBLUE,
     DarkGreen,
@@ -46,18 +45,15 @@ struct MOP;
 
 typedef void (*SkillEffect)(struct CHARACTER*, struct MOP*);
 
-typedef struct // 캐릭터의 스킬 작성을 위한 스킬 정보를 담을 구조체
-{
+typedef struct { // 캐릭터의 스킬 작성을 위한 스킬 정보를 담을 구조체
     char name[30];
     char description[100];
     int mp_cost;
     double damage_multiplier;
     SkillEffect effect;
-
 } SKILL;
 
-typedef struct CHARACTER // 캐릭터 생성 및 각 직업의 기틀을 위한 캐릭터 구조체
-{
+typedef struct { // 캐릭터 생성 및 각 직업의 기틀을 위한 캐릭터 구조체
     char name[50];
     char job[20];
     int level;
@@ -77,11 +73,9 @@ typedef struct CHARACTER // 캐릭터 생성 및 각 직업의 기틀을 위한 
     int defense;
     int evasion;
     int evadeTurns;
-
 } CHARACTER;
 
-typedef struct MOP // 몬스터의 기틀을 위한 몬스터 구조체
-{
+typedef struct { // 몬스터의 기틀을 위한 몬스터 구조체
     char name[50];
     int base_hp;
     int hp;
@@ -107,8 +101,7 @@ typedef struct MOP // 몬스터의 기틀을 위한 몬스터 구조체
 
 } MOP;
 
-typedef struct  // 랭킹 등록을 위해 작성한 RankEntry 구조체
-{
+typedef struct { // 랭킹 등록을 위해 작성한 RankEntry 구조체
     char name[50];
     char job[20];
     int floor;
@@ -167,11 +160,8 @@ void getCurrentDate(char* buffer, size_t size); // 캐릭터의 세이브 파일
 void SaveRanking(const CHARACTER* character, int floor); // 랭킹 저장용
 void showSaveSlots();    // 세이브 슬롯 관리용
 
-
-
 /****** Main ******/
-int main(void)
-{
+int main(void) {
     srand((int)time(NULL));
 
     CHARACTER character;
@@ -188,8 +178,7 @@ int main(void)
     return 0;
 }
 
-void CreateCharacter(CHARACTER* character)
-{
+void CreateCharacter(CHARACTER* character) {
     textcolor(WHITE);
     printf("이름을 입력하세요: ");
     scanf_s("%s", character->name, (unsigned int)sizeof(character->name));
@@ -211,8 +200,7 @@ void CreateCharacter(CHARACTER* character)
     while (getchar() != '\n');
     printf("\n");
 
-    switch (choice)
-    {
+    switch (choice) {
     case 1: SetWarrior(character); break;
     case 2: SetArcher(character); break;
     case 3: SetMage(character); break;
@@ -237,13 +225,11 @@ void CreateCharacter(CHARACTER* character)
     PrintCharacterStat(character);
 }
 
-void textcolor(int colorNum)
-{
+void textcolor(int colorNum) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), colorNum);
 }
 
-void PrintCharacterStat(CHARACTER* character)
-{
+void PrintCharacterStat(CHARACTER* character) {
     textcolor(YELLOW);
     printf("\n--- 캐릭터 상태 ---\n");
     printf("이름: %s\n", character->name);
@@ -259,26 +245,21 @@ void PrintCharacterStat(CHARACTER* character)
     textcolor(WHITE);
 }
 
-void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
-{
+void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev) {
     MOP boss = { "보스 몬스터", 500, 500, 150, 150, 200, 200, 500, 500 };
 
-    while (1)
-    {
-        if (!enterDungeon(dun_lev, character, mop))
-        {
+    while (1) {
+        if (!enterDungeon(dun_lev, character, mop)) {
             printf("\n게임을 종료합니다.\n");
             break;
         }
 
-        if (isBossFloor(*dun_lev))
-        {
+        if (isBossFloor(*dun_lev)) {
             resetBoss(&boss, *dun_lev, character->isNight);
             printf("\n※ 보스 층입니다! 강력한 %s이(가) 기다리고 있습니다! ※\n", boss.name);
             fightBoss(character, &boss, *dun_lev);
         }
-        else
-        {
+        else {
             fightmop(character, mop, *dun_lev);
         }
 
@@ -286,8 +267,7 @@ void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev)
     }
 }
 
-int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop)
-{
+int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop) {
 
     resetMop(mop, *dun_lev, character->isNight);
 
@@ -298,30 +278,25 @@ int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop)
 
     return 1;
 }
-void fightmop(CHARACTER* character, MOP* mop, int* dun_lev)
-{
-    for (int i = 0; i < 3; i++)
-    {
+void fightmop(CHARACTER* character, MOP* mop, int* dun_lev) {
+    for (int i = 0; i < 3; i++) {
         textcolor(RED);
         printf("%s(이/가) 나타났다! 싸우겠습니까? (Y/n) ", mop[i].name);
         textcolor(WHITE);
         char choice = _getch();
         printf("\n");
-        if (choice == 'n' || choice == 'N')
-        {
+        if (choice == 'n' || choice == 'N') {
             printf("%s(을/를) 회피했습니다..\n", mop[i].name);
             continue;
         }
         printf("%s와 전투를 시작합니다!\n\n", mop[i].name);
         Sleep(300);
 
-        while (mop[i].hp > 0 && character->hp > 0)
-        {
+        while (mop[i].hp > 0 && character->hp > 0) {
             applyStatusEffects(&mop[i]);
 
             int skillChance = rand() % 100;
-            if (skillChance < 30)
-            {
+            if (skillChance < 30) {
                 int idx = rand() % MAX_SKILLS;
                 SKILL* sk = &character->skills[idx];
 
@@ -353,8 +328,7 @@ void fightmop(CHARACTER* character, MOP* mop, int* dun_lev)
                 mop[i].name, damToMob, mop[i].hp);
             Sleep(300);
 
-            if (mop[i].hp <= 0)
-            {
+            if (mop[i].hp <= 0) {
                 textcolor(YELLOW);
                 printf("\n%s를 처치했다!\n", mop[i].name);
                 character->exp += mop[i].exp;
@@ -374,8 +348,7 @@ void fightmop(CHARACTER* character, MOP* mop, int* dun_lev)
             int damToChr = rawDamage - character->defense;
             if (damToChr < 0) damToChr = 0;
 
-            if (character->evadeTurns > 0)
-            {
+            if (character->evadeTurns > 0) {
                 character->evadeTurns--;
                 textcolor(GREEN);
                 printf("<< 연막 효과로 %s는 완벽히 회피했다! >> (남은 턴: %d)\n\n", character->name, character->evadeTurns);
@@ -384,8 +357,7 @@ void fightmop(CHARACTER* character, MOP* mop, int* dun_lev)
             }
 
             int evade = rand() % 100;
-            if (evade < character->evasion)
-            {
+            if (evade < character->evasion) {
                 textcolor(GREEN);
                 printf("%s의 공격을 %s가 회피했다!\n\n", mop[i].name, character->name);
                 textcolor(WHITE);
@@ -401,8 +373,7 @@ void fightmop(CHARACTER* character, MOP* mop, int* dun_lev)
                 mop[i].name, character->name, damToChr, character->hp);
             Sleep(500);
 
-            if (clampAndCheckDeath(&character->hp))
-            {
+            if (clampAndCheckDeath(&character->hp)) {
                 printf("%s(이/가) 사망했습니다... 게임 오버!\n", character->name);
                 SaveRanking(character, *dun_lev);
                 exit(0);
@@ -411,40 +382,34 @@ void fightmop(CHARACTER* character, MOP* mop, int* dun_lev)
     }
 }
 
-void nextDun(int* dun_lev, MOP* mop, CHARACTER* character)
-{
+void nextDun(int* dun_lev, MOP* mop, CHARACTER* character) {
     char next;
     resetMop(mop, *dun_lev, character->isNight);
     printf("%d층 클리어!! 다음 층으로 이동하시겠습니까? (y/n) ", *dun_lev);
     scanf_s(" %c", &next, 1);
     while (getchar() != '\n');
 
-    if (next == 'y' || next == 'Y')
-    {
+    if (next == 'y' || next == 'Y') {
         (*dun_lev)++;
     }
-    else
-    {
+    else {
         enterTown(character, dun_lev);
         printf("귀환중... \n");
         Sleep(300);
     }
 }
 
-void resetMop(MOP* mop, int difficulty, int isNight)
-{
+void resetMop(MOP* mop, int difficulty, int isNight) {
     int i = 0;
     int effective_difficulty = (difficulty > 50) ? 50 : difficulty;
 
-    for (i = 0; i < 3; i++)
-    {
+    for (i = 0; i < 3; i++) {
         mop[i].hp = mop[i].base_hp + effective_difficulty * 30;
         mop[i].dam = mop[i].basDam + effective_difficulty * 3;
         mop[i].exp = mop[i].base_exp;
         mop[i].reward_gold = mop[i].base_gold;
 
-        if (isNight == 1)
-        {
+        if (isNight == 1) {
             mop[i].hp = (int)(mop[i].hp * NIGHT_HP_MULT);
             mop[i].dam = (int)(mop[i].dam * NIGHT_DAM_MULT);
             mop[i].exp = (int)(mop[i].exp * NIGHT_EXP_MULT);
@@ -453,8 +418,7 @@ void resetMop(MOP* mop, int difficulty, int isNight)
     }
 }
 
-int calculateDamage(CHARACTER* character, int* isCrit)
-{
+int calculateDamage(CHARACTER* character, int* isCrit) {
     int base = 5;
     double mul = 1.0
         + sqrt(character->strength) * 1.5
@@ -464,8 +428,7 @@ int calculateDamage(CHARACTER* character, int* isCrit)
         + character->weapondmg;
     int damage = (int)(base * mul);
 
-    if (isCrit)
-    {
+    if (isCrit) {
         int chance = 5 + (int)(character->luck * 0.75);
         *isCrit = (rand() % 100) < chance;
         if (*isCrit) damage = (int)(damage * 1.3);
@@ -473,10 +436,8 @@ int calculateDamage(CHARACTER* character, int* isCrit)
     return damage;
 }
 
-void levelUp(CHARACTER* character)
-{
-    while (character->exp >= 100)
-    {
+void levelUp(CHARACTER* character) {
+    while (character->exp >= 100) {
         character->level++;
         character->exp -= 100;
         character->max_hp += 10;
@@ -486,8 +447,7 @@ void levelUp(CHARACTER* character)
 
         int stat_increase1 = rand() % 4;
         int stat_increase2 = rand() % 4;
-        while (stat_increase1 == stat_increase2)
-        {
+        while (stat_increase1 == stat_increase2) {
             stat_increase2 = rand() % 4;
         }
 
@@ -501,74 +461,58 @@ void levelUp(CHARACTER* character)
         printf("스탯이 상승했습니다!\n");
         PrintCharacterStat(character);
 
-        if (character->level == 20 || character->level == 40)
-        {
+        if (character->level == 20 || character->level == 40) {
             waitForKeyPress();
             promoteCharacter(character);
         }
     }
 }
 
-void promoteCharacter(CHARACTER* character)
-{
+void promoteCharacter(CHARACTER* character) {
     printf("\n--- 전직 가능! ---\n");
     printf("현재 직업: %s\n", character->job);
 
-    if (character->level == 20)
-    {
-        if (strcmp(character->job, "전사") == 0)
-        {
+    if (character->level == 20) {
+        if (strcmp(character->job, "전사") == 0) {
             printf("1. 파이터 (공격력 증가)\n");
             printf("2. 페이지 (방어력 증가)\n");
         }
-        else if (strcmp(character->job, "궁수") == 0)
-        {
+        else if (strcmp(character->job, "궁수") == 0) {
             printf("1. 헌터 (회피율 증가)\n");
             printf("2. 사수 (명중률 증가)\n");
         }
-        else if (strcmp(character->job, "마법사") == 0)
-        {
+        else if (strcmp(character->job, "마법사") == 0) {
             printf("1. 위자드 (마법 공격력 증가)\n");
             printf("2. 클레릭 (성 속성 스킬 추가)\n");
         }
-        else if (strcmp(character->job, "도적") == 0)
-        {
+        else if (strcmp(character->job, "도적") == 0) {
             printf("1. 어쌔신 (치명타 확률 증가)\n");
             printf("2. 시프 (회피율 증가)\n");
         }
     }
-    else if (character->level == 40)
-    {
-        if (strcmp(character->job, "파이터") == 0)
-        {
+    else if (character->level == 40) {
+        if (strcmp(character->job, "파이터") == 0) {
             printf("1. 크루세이더 (공격력 특화)\n");
         }
-        else if (strcmp(character->job, "페이지") == 0)
-        {
+        else if (strcmp(character->job, "페이지") == 0) {
             printf("1. 나이트 (방어력 특화)\n");
         }
-        else if (strcmp(character->job, "헌터") == 0)
-        {
+        else if (strcmp(character->job, "헌터") == 0) {
             printf("1. 레인저 (원거리 공격력 증가)\n");
         }
-        else if (strcmp(character->job, "사수") == 0)
-        {
+        else if (strcmp(character->job, "사수") == 0) {
             printf("1. 저격수 (단일 타겟 공격 특화)\n");
         }
-        else if (strcmp(character->job, "위자드") == 0)
-        {
+        else if (strcmp(character->job, "위자드") == 0) {
             printf("1. 메이지 (마법 공격 최강)\n");
         }
-        else if (strcmp(character->job, "클레릭") == 0)
-        {
+        else if (strcmp(character->job, "클레릭") == 0) {
             printf("1. 프리스트 (성 속성 스킬 강화)\n");
         }
-        else if (strcmp(character->job, "어쌔신") == 0)
-        {
+        else if (strcmp(character->job, "어쌔신") == 0) {
             printf("1. 허밋 (은신 & 치명타 증가)\n");
         }
-        else if (strcmp(character->job, "시프") == 0)
-        {
+        else if (strcmp(character->job, "시프") == 0) {
             printf("1. 시프마스터 (속도 증가)\n");
         }
     }
@@ -577,8 +521,7 @@ void promoteCharacter(CHARACTER* character)
     int choice;
     scanf_s("%d", &choice);
 
-    if (character->level == 20)
-    {
+    if (character->level == 20) {
         if (strcmp(character->job, "전사") == 0)
             strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "파이터" : "페이지");
         else if (strcmp(character->job, "궁수") == 0)
@@ -588,8 +531,7 @@ void promoteCharacter(CHARACTER* character)
         else if (strcmp(character->job, "도적") == 0)
             strcpy_s(character->job, sizeof(character->job), (choice == 1) ? "어쌔신" : "시프");
     }
-    else if (character->level == 40)
-    {
+    else if (character->level == 40) {
         if (strcmp(character->job, "파이터") == 0)
             strcpy_s(character->job, sizeof(character->job), "크루세이더");
         else if (strcmp(character->job, "페이지") == 0)
@@ -612,14 +554,12 @@ void promoteCharacter(CHARACTER* character)
     PrintCharacterStat(character);
 }
 
-void enterTown(CHARACTER* character, int* dun_lev)
-{
+void enterTown(CHARACTER* character, int* dun_lev) {
     int choice;
 
     printf("\n현재 진행 중인 던전 층: %d층\n", *dun_lev);
 
-    while (1)
-    {
+    while (1) {
         printf("1. 여관 (체력 회복)\n");
         printf("2. 대장간 (무기 강화)\n");
         printf("3. 던전 탐험\n");
@@ -628,14 +568,12 @@ void enterTown(CHARACTER* character, int* dun_lev)
         printf("6. 게임 저장\n");
         printf("선택: ");
 
-        while (scanf_s("%d", &choice) != 1 || choice < 1 || choice > 6)
-        {
+        while (scanf_s("%d", &choice) != 1 || choice < 1 || choice > 6) {
             (void)getchar();
             printf("잘못된 선택입니다. 다시 입력해주세요: ");
         }
 
-        switch (choice)
-        {
+        switch (choice) {
         case 1:
             inn(character);
             break;
@@ -662,8 +600,7 @@ void enterTown(CHARACTER* character, int* dun_lev)
 
     }
 }
-void inn(CHARACTER* character)
-{
+void inn(CHARACTER* character) {
     int choice;
     printf("1. 체력 회복\n");
     printf("2. 시간 변경 (낮/밤)\n");
@@ -671,68 +608,56 @@ void inn(CHARACTER* character)
     scanf_s("%d", &choice);
     (void)getchar();
 
-    if (choice == 1)
-    {
+    if (choice == 1) {
         character->hp = character->max_hp;
         printf("체력이 전부 회복되었습니다.\n");
     }
-    else if (choice == 2)
-    {
+    else if (choice == 2) {
         Sleep(500);
         character->isNight = !(character->isNight);
-        if (character->isNight)
-        {
+        if (character->isNight) {
             printf("밤이 깊었습니다.. 던전의 몬스터들은 더욱 흉포해졌습니다..\n");
         }
-        else
-        {
+        else {
             printf("낮이 되었습니다. 던전의 몬스터들은 원래대로 돌아왔습니다.\n");
         }
     }
-    else
-    {
+    else {
         printf("잘못된 선택입니다.\n");
     }
 }
-void blacksmith(CHARACTER* character)
-{
+void blacksmith(CHARACTER* character) {
     int choice;
     printf("1. 무기 강화\n");
     printf("2. 무기 상태 보기\n");
     printf("선택: ");
     scanf_s("%d", &choice);
 
-    if (choice == 1)
-    {
+    if (choice == 1) {
         upgrade_weapon(character);
     }
-    else if (choice == 2)
-    {
+    else if (choice == 2) {
         printf("현재 무기 데미지: %d\n", character->weapondmg);
         printf("무기 강화 상태: +%d\n", character->weaponup);
     }
-    else
-    {
+    else {
         printf("잘못된 선택입니다.\n");
     }
 }
-void upgrade_weapon(CHARACTER* character)
-{
+void upgrade_weapon(CHARACTER* character) {
     const int upgrade_cost = 100;
     const int max_weaponup = 99;
     const int base_success_rate = 100;
     const int decrease_per_level = 5;
     const int min_success_rate = 40;
 
-    if (character->gold < upgrade_cost)
-    {
+    if (character->gold < upgrade_cost) {
         printf("현재 소지 금액: %dG\n", character->gold);
         printf("골드가 부족합니다. 강화할 수 없습니다.\n\n");
         return;
     }
 
-    if (character->weaponup >= max_weaponup)
-    {
+    if (character->weaponup >= max_weaponup) {
         printf("강화 제한에 도달했습니다. 최대 강화 수치는 +%d입니다.\n\n", max_weaponup);
         return;
     }
@@ -742,33 +667,28 @@ void upgrade_weapon(CHARACTER* character)
     int current_level = character->weaponup;
     int success_rate;
 
-    if (current_level < 10)
-    {
+    if (current_level < 10) {
         success_rate = base_success_rate;
     }
-    else
-    {
+    else {
         success_rate = base_success_rate - (current_level - 9) * decrease_per_level;
         if (success_rate < min_success_rate) success_rate = min_success_rate;
     }
 
     int roll = rand() % 100;
 
-    if (roll < success_rate)
-    {
+    if (roll < success_rate) {
         character->weaponup++;
         character->weapondmg += (current_level < 10) ? 2 : 3;
         printf("무기 강화 성공! 무기 데미지가 %s 증가했습니다. [+%d]\n\n",
             (current_level < 10) ? "+2" : "+3", character->weaponup);
     }
-    else
-    {
+    else {
         printf("무기 강화 실패... (현재 무기 강화 수치: +%d)\n\n", character->weaponup);
     }
 }
 
-void printCritMessage(const char* attacker, const char* target, int isPlayer)
-{
+void printCritMessage(const char* attacker, const char* target, int isPlayer) {
     if (isPlayer)
         textcolor(RED);
     else
@@ -779,27 +699,22 @@ void printCritMessage(const char* attacker, const char* target, int isPlayer)
     textcolor(WHITE);
 }
 
-int clampHP(int hp)
-{
+int clampHP(int hp) {
     return hp < 0 ? 0 : hp;
 }
 
-int clampAndCheckDeath(int* hp)
-{
-    if (*hp <= 0)
-    {
+int clampAndCheckDeath(int* hp) {
+    if (*hp <= 0) {
         *hp = 0;
         return 1;
     }
     return 0;
 }
 
-void waitForKeyPress()
-{
+void waitForKeyPress() {
     printf("계속하려면 Enter 또는 Spacebar를 누르세요...");
     Sleep(500);
-    while (1)
-    {
+    while (1) {
         int key = _getch();
         if (key == ' ' || key == 13)
             break;
@@ -807,8 +722,7 @@ void waitForKeyPress()
     printf("\n");
 }
 
-void smash(CHARACTER* c, MOP* m)
-{
+void smash(CHARACTER* c, MOP* m) {
     int isCrit = 0;
     int damage = (int)(calculateDamage(c, &isCrit) * 1.2);
     m->hp -= damage;
@@ -816,8 +730,7 @@ void smash(CHARACTER* c, MOP* m)
     printf("[강타] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void shield_bash(CHARACTER* c, MOP* m)
-{
+void shield_bash(CHARACTER* c, MOP* m) {
     int damage = (int)(calculateDamage(c, NULL) * 1.0);
     m->hp -= damage;
     m->hp = clampHP(m->hp);
@@ -826,8 +739,7 @@ void shield_bash(CHARACTER* c, MOP* m)
     printf("[방패 밀치기] %s에게 %d 데미지를 입혔습니다! (기절 효과)\n", m->name, damage);
 }
 
-void rage_strike(CHARACTER* c, MOP* m)
-{
+void rage_strike(CHARACTER* c, MOP* m) {
     int missing_hp = c->max_hp - c->hp;
     int bonus = (int)(missing_hp * 0.2);
     int damage = calculateDamage(c, NULL) + bonus;
@@ -836,10 +748,8 @@ void rage_strike(CHARACTER* c, MOP* m)
     printf("[분노의 일격] %s에게 %d 데미지를 입혔습니다! (보너스 %d)\n", m->name, damage, bonus);
 }
 
-void rapid_shot(CHARACTER* c, MOP* m)
-{
-    for (int i = 0; i < 2; i++)
-    {
+void rapid_shot(CHARACTER* c, MOP* m) {
+    for (int i = 0; i < 2; i++) {
         int damage = (int)(calculateDamage(c, NULL) * 0.7);
         m->hp -= damage;
         m->hp = clampHP(m->hp);
@@ -847,8 +757,7 @@ void rapid_shot(CHARACTER* c, MOP* m)
     }
 }
 
-void poison_arrow(CHARACTER* c, MOP* m)
-{
+void poison_arrow(CHARACTER* c, MOP* m) {
     int damage = calculateDamage(c, NULL);
     m->hp -= damage;
     m->hp = clampHP(m->hp);
@@ -857,8 +766,7 @@ void poison_arrow(CHARACTER* c, MOP* m)
     printf("[독화살] %s에게 %d 데미지를 입혔습니다! (중독 효과 - 3턴 지속)\n", m->name, damage);
 }
 
-void critical_shot(CHARACTER* c, MOP* m)
-{
+void critical_shot(CHARACTER* c, MOP* m) {
     int isCrit = rand() % 100 < 80;
     int damage = calculateDamage(c, NULL);
     if (isCrit) damage = (int)(damage * 1.3);
@@ -867,24 +775,21 @@ void critical_shot(CHARACTER* c, MOP* m)
     printf("[치명 사격] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void fireball(CHARACTER* c, MOP* m)
-{
+void fireball(CHARACTER* c, MOP* m) {
     int damage = (int)(calculateDamage(c, NULL) * 1.5);
     m->hp -= damage;
     m->hp = clampHP(m->hp);
     printf("[파이어볼] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void ice_arrow(CHARACTER* c, MOP* m)
-{
+void ice_arrow(CHARACTER* c, MOP* m) {
     int damage = calculateDamage(c, NULL);
     m->hp -= damage;
     m->hp = clampHP(m->hp);
     printf("[얼음 화살] %s에게 %d 데미지를 입혔습니다! (속도 감소 효과)\n", m->name, damage);
 }
 
-void drain_life(CHARACTER* c, MOP* m)
-{
+void drain_life(CHARACTER* c, MOP* m) {
     int damage = (int)(calculateDamage(c, NULL) * 1.0);
     int heal = damage / 2;
     m->hp -= damage;
@@ -894,8 +799,7 @@ void drain_life(CHARACTER* c, MOP* m)
     printf("[체력 흡수] %s에게 %d 데미지를 입히고 %d 체력을 회복했습니다!\n", m->name, damage, heal);
 }
 
-void shadow_strike(CHARACTER* c, MOP* m)
-{
+void shadow_strike(CHARACTER* c, MOP* m) {
     int isCrit = rand() % 100 < 70;
     int damage = calculateDamage(c, NULL);
     if (isCrit) damage = (int)(damage * 1.2);
@@ -904,14 +808,12 @@ void shadow_strike(CHARACTER* c, MOP* m)
     printf("[그림자 일격] %s에게 %d 데미지를 입혔습니다!\n", m->name, damage);
 }
 
-void smoke_bomb(CHARACTER* c, MOP* m)
-{
+void smoke_bomb(CHARACTER* c, MOP* m) {
     c->evadeTurns = 2;
     printf("[연막] %s가 2턴 동안 모든 공격을 회피합니다!\n", c->name);
 }
 
-void bleed(CHARACTER* c, MOP* m)
-{
+void bleed(CHARACTER* c, MOP* m) {
     int damage = (int)(calculateDamage(c, NULL) * 1.0);
     m->hp -= damage;
     m->hp = clampHP(m->hp);
@@ -920,45 +822,38 @@ void bleed(CHARACTER* c, MOP* m)
     printf("[치명 상처] %s에게 %d 데미지를 입혔습니다! (출혈 효과 - 3턴 지속)\n", m->name, damage);
 }
 
-void applyStatusEffects(MOP* m)
-{
-    if (m->isStunned && m->stunTurns > 0)
-    {
+void applyStatusEffects(MOP* m) {
+    if (m->isStunned && m->stunTurns > 0) {
         printf(">> %s는 기절 상태로 행동할 수 없다! (남은 턴: %d)\n", m->name, m->stunTurns);
         m->stunTurns--;
-        if (m->stunTurns == 0)
-        {
+        if (m->stunTurns == 0) {
             m->isStunned = 0;
             printf(">> %s의 기절 상태가 풀렸습니다.\n", m->name);
         }
         return;
     }
 
-    if (m->isPoisoned && m->poisonTurns > 0)
-    {
+    if (m->isPoisoned && m->poisonTurns > 0) {
         int poisonDmg = 5;
         m->hp -= poisonDmg;
         m->hp = clampHP(m->hp);
         printf(">> %s는 중독 상태로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, poisonDmg, m->hp);
         m->poisonTurns--;
 
-        if (m->poisonTurns == 0)
-        {
+        if (m->poisonTurns == 0) {
             m->isPoisoned = 0;
             printf(">> %s의 중독이 해제되었습니다.\n", m->name);
         }
     }
 
-    if (m->isBleeding && m->bleedTurns > 0)
-    {
+    if (m->isBleeding && m->bleedTurns > 0) {
         int bleedDmg = 7;
         m->hp -= bleedDmg;
         m->hp = clampHP(m->hp);
         printf(">> %s는 출혈로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, bleedDmg, m->hp);
         m->bleedTurns--;
 
-        if (m->bleedTurns == 0)
-        {
+        if (m->bleedTurns == 0) {
             m->isBleeding = 0;
             printf(">> %s의 출혈이 멈췄습니다.\n", m->name);
         }
@@ -973,13 +868,11 @@ void applyStatusEffects(MOP* m)
     //}
 }
 
-int isBossFloor(int dun_lev)
-{
+int isBossFloor(int dun_lev) {
     return dun_lev % 5 == 0;
 }
 
-void resetBoss(MOP* boss, int level, int isNight)
-{
+void resetBoss(MOP* boss, int level, int isNight) {
 
     char* bossNames[] = { "슬라임 킹", "임프 군주", "고블린 장군", "오우거", "드래곤" };
     int index = (level / 5 - 1);
@@ -991,8 +884,7 @@ void resetBoss(MOP* boss, int level, int isNight)
     boss->exp = boss->base_exp + level * 10;
     boss->reward_gold = boss->base_gold + level * 20;
 
-    if (isNight)
-    {
+    if (isNight) {
         boss->hp = (int)(boss->hp * NIGHT_HP_MULT);
         boss->dam = (int)(boss->dam * NIGHT_DAM_MULT);
         boss->exp = (int)(boss->exp * NIGHT_EXP_MULT);
@@ -1000,16 +892,14 @@ void resetBoss(MOP* boss, int level, int isNight)
     }
 }
 
-void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev)
-{
+void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev) {
     textcolor(RED);
     printf("%s(이/가) 나타났다! 싸우겠습니까? (Y/n) ", boss->name);
     textcolor(WHITE);
     char choice = _getch();
     printf("\n");
 
-    if (choice == 'n' || choice == 'N')
-    {
+    if (choice == 'n' || choice == 'N') {
         printf("%s(을/를) 회피했습니다..\n", boss->name);
         return;
     }
@@ -1017,13 +907,11 @@ void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev)
     printf("%s와 전투를 시작합니다!\n\n", boss->name);
     Sleep(300);
 
-    while (boss->hp > 0 && character->hp > 0)
-    {
+    while (boss->hp > 0 && character->hp > 0) {
         applyStatusEffects(boss);
 
         int skillChance = rand() % 100;
-        if (skillChance < 30)
-        {
+        if (skillChance < 30) {
             int idx = rand() % MAX_SKILLS;
             SKILL* sk = &character->skills[idx];
 
@@ -1054,8 +942,7 @@ void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev)
         printf("%s에게 %d의 데미지를 입혔다! (남은 체력: %d)\n", boss->name, damToBoss, boss->hp);
         Sleep(300);
 
-        if (boss->hp <= 0)
-        {
+        if (boss->hp <= 0) {
             textcolor(YELLOW);
             printf("\n%s를 처치했다!\n", boss->name);
             character->exp += boss->exp;
@@ -1074,8 +961,7 @@ void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev)
         int damToChr = rawDamage - character->defense;
         if (damToChr < 0) damToChr = 0;
 
-        if (character->evadeTurns > 0)
-        {
+        if (character->evadeTurns > 0) {
             character->evadeTurns--;
             textcolor(GREEN);
             printf("<< 연막 효과로 %s는 완벽히 회피했다! >> (남은 턴: %d)\n\n", character->name, character->evadeTurns);
@@ -1084,8 +970,7 @@ void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev)
         }
 
         int evade = rand() % 100;
-        if (evade < character->evasion)
-        {
+        if (evade < character->evasion) {
             textcolor(GREEN);
             printf("%s의 공격을 %s가 회피했다!\n\n", boss->name, character->name);
             textcolor(WHITE);
@@ -1101,8 +986,7 @@ void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev)
             boss->name, character->name, damToChr, character->hp);
         Sleep(500);
 
-        if (clampAndCheckDeath(&character->hp))
-        {
+        if (clampAndCheckDeath(&character->hp)) {
             printf("%s(이/가) 사망했습니다... 게임 오버!\n", character->name);
             SaveRanking(character, *dun_lev);
             exit(0);
@@ -1110,8 +994,7 @@ void fightBoss(CHARACTER* character, MOP* boss, int* dun_lev)
     }
 }
 
-void SetWarrior(CHARACTER* character)
-{
+void SetWarrior(CHARACTER* character) {
     strcpy_s(character->job, sizeof(character->job), "전사");
     character->strength = 15;
     character->agility = 5;
@@ -1141,8 +1024,7 @@ void SetWarrior(CHARACTER* character)
     character->evasion = 10;
 }
 
-void SetArcher(CHARACTER* character)
-{
+void SetArcher(CHARACTER* character) {
     strcpy_s(character->job, sizeof(character->job), "궁수");
     character->strength = 6;
     character->agility = 15;
@@ -1172,8 +1054,7 @@ void SetArcher(CHARACTER* character)
     character->evasion = 30;
 }
 
-void SetMage(CHARACTER* character)
-{
+void SetMage(CHARACTER* character) {
     strcpy_s(character->job, sizeof(character->job), "마법사");
     character->strength = 3;
     character->agility = 4;
@@ -1203,8 +1084,7 @@ void SetMage(CHARACTER* character)
     character->evasion = 10;
 }
 
-void SetRogue(CHARACTER* character)
-{
+void SetRogue(CHARACTER* character) {
     strcpy_s(character->job, sizeof(character->job), "도적");
     character->strength = 3;
     character->agility = 8;
@@ -1234,19 +1114,16 @@ void SetRogue(CHARACTER* character)
     character->evasion = 40;
 }
 
-void getCurrentDate(char* buffer, size_t size)
-{
+void getCurrentDate(char* buffer, size_t size) {
     time_t now = time(NULL);
     struct tm* t = localtime(&now);
     strftime(buffer, size, "%Y-%m-%d", t);
 }
 
-void SaveRanking(const CHARACTER* character, int floor)
-{
+void SaveRanking(const CHARACTER* character, int floor) {
     FILE* fp = NULL;
     errno_t err = fopen_s(&fp, "C:\\Ctest\\Ranking.txt", "a");
-    if (!fp)
-    {
+    if (!fp) {
         printf("랭킹 저장 실패\n");
         return;
     }
@@ -1271,8 +1148,7 @@ void printTopRanking() {
         list[count].name, (unsigned)_countof(list[count].name),
         list[count].job, (unsigned)_countof(list[count].job),
         &list[count].floor,
-        list[count].date, (unsigned)_countof(list[count].date)) == 4)
-    {
+        list[count].date, (unsigned)_countof(list[count].date)) == 4) {
         count++;
     }
     fclose(fp);
@@ -1294,11 +1170,9 @@ void printTopRanking() {
     }
 }
 
-void showMainMenu(CHARACTER* character, MOP* mop, int* dun_lev)
-{
+void showMainMenu(CHARACTER* character, MOP* mop, int* dun_lev) {
     int choice;
-    while (1)
-    {
+    while (1) {
         textcolor(YELLOW);
         printf("==== 제목 미정 ====\n");
         printf("1. New Game\n");
@@ -1310,23 +1184,20 @@ void showMainMenu(CHARACTER* character, MOP* mop, int* dun_lev)
         printf("선택: ");
         scanf_s("%d", &choice);
 
-        switch (choice)
-        {
+        switch (choice) {
         case 1:
             CreateCharacter(character);
             enterTown(character, dun_lev);
             gameLoop(character, mop, dun_lev);
             return;
         case 2:
-            if (loadGame(character, dun_lev))
-            {
+            if (loadGame(character, dun_lev)) {
                 printf("게임을 불러왔습니다!\n");
                 PrintCharacterStat(character);
                 enterTown(character, dun_lev);
                 gameLoop(character, mop, dun_lev);
             }
-            else
-            {
+            else {
                 printf("저장된 게임이 없습니다.\n");
             }
             break;
@@ -1342,8 +1213,7 @@ void showMainMenu(CHARACTER* character, MOP* mop, int* dun_lev)
     }
 }
 
-void saveGame(const CHARACTER* character, int dun_lev)
-{
+void saveGame(const CHARACTER* character, int dun_lev) {
     int slot;
     printf("\n저장할 슬롯을 선택하세요 (1~10): ");
     while (scanf_s("%d", &slot) != 1 || slot < 1 || slot > MAX_SLOT) {
@@ -1367,8 +1237,7 @@ void saveGame(const CHARACTER* character, int dun_lev)
     printf("슬롯 %d에 저장 완료!\n", slot);
 }
 
-int loadGame(CHARACTER* character, int* dun_lev)
-{
+int loadGame(CHARACTER* character, int* dun_lev) {
     showSaveSlots();
 
     int slot;
@@ -1405,19 +1274,16 @@ int loadGame(CHARACTER* character, int* dun_lev)
     return 1;
 }
 
-void showSaveSlots()
-{
+void showSaveSlots() {
     printf("\n==== 저장 슬롯 목록 ====\n");
 
-    for (int i = 1; i <= MAX_SLOT; ++i)
-    {
+    for (int i = 1; i <= MAX_SLOT; ++i) {
         char filename[100];
         sprintf_s(filename, sizeof(filename), "C:\\Ctest\\save_slot%d.dat", i);
 
         FILE* fp;
         errno_t err = fopen_s(&fp, filename, "rb");
-        if (err || !fp)
-        {
+        if (err || !fp) {
             printf("슬롯 %d: [빈 슬롯]\n", i);
             continue;
         }
@@ -1430,6 +1296,5 @@ void showSaveSlots()
 
         printf("슬롯 %d: %s (%s) - %d층\n", i, tempChar.name, tempChar.job, tempFloor);
     }
-
     printf("========================\n");
 }
