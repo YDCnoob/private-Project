@@ -833,13 +833,22 @@ void applyStatusEffects(MOP* m) {
         return;
     }
 
+    if (m->isFrozen && m->freezeTurns > 0) {
+        printf(">> %s는 얼어붙어 움직일 수 없다! (남은 턴: %d)\n", m->name, m->freezeTurns);
+        m->freezeTurns--;
+        if (m->freezeTurns == 0) {
+            m->isFrozen = 0;
+            printf(">> %s의 빙결 상태가 해제되었습니다.\n", m->name);
+        }
+        return; 
+    }
+
     if (m->isPoisoned && m->poisonTurns > 0) {
         int poisonDmg = 5;
         m->hp -= poisonDmg;
         m->hp = clampHP(m->hp);
         printf(">> %s는 중독 상태로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, poisonDmg, m->hp);
         m->poisonTurns--;
-
         if (m->poisonTurns == 0) {
             m->isPoisoned = 0;
             printf(">> %s의 중독이 해제되었습니다.\n", m->name);
@@ -852,20 +861,11 @@ void applyStatusEffects(MOP* m) {
         m->hp = clampHP(m->hp);
         printf(">> %s는 출혈로 %d의 피해를 입었다! (남은 체력: %d)\n", m->name, bleedDmg, m->hp);
         m->bleedTurns--;
-
         if (m->bleedTurns == 0) {
             m->isBleeding = 0;
             printf(">> %s의 출혈이 멈췄습니다.\n", m->name);
         }
     }
-    //if (m->isStunned && m->stunTurns > 0)
-    //{
-    //    
-    //}
-    //if (m->isFrozen && m->freezeTurns > 0)
-    //{
-
-    //}
 }
 
 int isBossFloor(int dun_lev) {
