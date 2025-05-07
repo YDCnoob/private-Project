@@ -110,6 +110,7 @@ typedef struct  // 랭킹 등록을 위해 작성한 RankEntry 구조체
     char date[20];
 } RankEntry;
 
+/****** Functions ******/
 // 스킬 함수 선언
 void smash(CHARACTER* c, MOP* m);
 void shield_bash(CHARACTER* c, MOP* m);
