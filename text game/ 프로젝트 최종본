@@ -45,7 +45,7 @@ struct MOP;
 
 typedef void (*SkillEffect)(struct CHARACTER*, struct MOP*);
 
-typedef struct { // 캐릭터의 스킬 작성을 위한 스킬 정보를 담을 구조체
+typedef struct {             // 캐릭터의 스킬 작성을 위한 스킬 정보를 담을 구조체
     char name[30];
     char description[100];
     int mp_cost;
@@ -53,7 +53,7 @@ typedef struct { // 캐릭터의 스킬 작성을 위한 스킬 정보를 담을
     SkillEffect effect;
 } SKILL;
 
-typedef struct { // 캐릭터 생성 및 각 직업의 기틀을 위한 캐릭터 구조체
+typedef struct {             // 캐릭터 생성 및 각 직업의 기틀을 위한 캐릭터 구조체
     char name[50];
     char job[20];
     int level;
@@ -75,7 +75,7 @@ typedef struct { // 캐릭터 생성 및 각 직업의 기틀을 위한 캐릭�
     int evadeTurns;
 } CHARACTER;
 
-typedef struct { // 몬스터의 기틀을 위한 몬스터 구조체
+typedef struct {             // 몬스터의 기틀을 위한 몬스터 구조체
     char name[50];
     int base_hp;
     int hp;
@@ -101,7 +101,7 @@ typedef struct { // 몬스터의 기틀을 위한 몬스터 구조체
 
 } MOP;
 
-typedef struct { // 랭킹 등록을 위해 작성한 RankEntry 구조체
+typedef struct {             // 랭킹 등록을 위해 작성한 RankEntry 구조체
     char name[50];
     char job[20];
     int floor;
@@ -110,55 +110,55 @@ typedef struct { // 랭킹 등록을 위해 작성한 RankEntry 구조체
 
 /****** Functions ******/
 // 스킬 함수 선언
-void smash(CHARACTER* c, MOP* m);
-void shield_bash(CHARACTER* c, MOP* m);
-void rage_strike(CHARACTER* c, MOP* m);
-void rapid_shot(CHARACTER* c, MOP* m);
-void poison_arrow(CHARACTER* c, MOP* m);
-void critical_shot(CHARACTER* c, MOP* m);
-void fireball(CHARACTER* c, MOP* m);
-void ice_arrow(CHARACTER* c, MOP* m);
-void drain_life(CHARACTER* c, MOP* m);
-void shadow_strike(CHARACTER* c, MOP* m);
-void smoke_bomb(CHARACTER* c, MOP* m);
-void bleed(CHARACTER* c, MOP* m);
+void smash(CHARACTER* c, MOP* m);                                                 // 전사 클래스 강타 관련 함수
+void shield_bash(CHARACTER* c, MOP* m);                                           // 전사 클래스 방패 강타 관련 함수
+void rage_strike(CHARACTER* c, MOP* m);                                           // 전사 클래스 분노의 일격 관련 함수
+void rapid_shot(CHARACTER* c, MOP* m);                                            // 궁수 클래스 속사 관련 함수
+void poison_arrow(CHARACTER* c, MOP* m);                                          // 궁수 클래스 독 화살 관련 함수
+void critical_shot(CHARACTER* c, MOP* m);                                         // 궁수 클래스 치명적인 일격 관련 함수
+void fireball(CHARACTER* c, MOP* m);                                              // 마법사 클래스 화염구 마법 관련 함수
+void ice_arrow(CHARACTER* c, MOP* m);                                             // 마법사 클래스 빙결 화살 관련 함수
+void drain_life(CHARACTER* c, MOP* m);                                            // 마법사 클래스 흡혈 마법 관련 함수
+void shadow_strike(CHARACTER* c, MOP* m);                                         // 도적 클래스 그림자 일격 관련 함수
+void smoke_bomb(CHARACTER* c, MOP* m);                                            // 도적 클래스 연막탄 스킬 관련 함수
+void bleed(CHARACTER* c, MOP* m);                                                 // 상태이상: 출혈
 
 // 상태 이상 함수 선언
-void applyStatusEffects(MOP* m);
+void applyStatusEffects(MOP* m);                                                  // 상태이상 기능 관련 함수
 
 // 주요 기능 함수 선언
-void showMainMenu(CHARACTER* character, MOP* mop, int* dun_lev);  // 메인메뉴 출력
-int loadGame(CHARACTER* character, int* dun_lev);                 // 세이브 파일 로드
-void saveGame(const CHARACTER* character, int dun_lev);           // 게임 내용 세이브를 위한 함수
-void CreateCharacter(CHARACTER* character);                       // 캐릭터 생성 함수
-void PrintCharacterStat(CHARACTER* character);                    // 캐릭터 스탯 print 함수
-void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev);      // 게임 시스템 전용 함수
-int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop);   // 던전 진입
-void fightmop(CHARACTER* character, MOP* mop, int dun_lev);       // 게임 전반 몬스터와의 전투 시 작동
-void nextDun(int* dun_lev, MOP* mop, CHARACTER* character);       // 해당 층 클리어 이후 다음 층으로 이동
-void resetMop(MOP* mop, int difficulty, int isNight);             // 몬스터 정보 초기화
-int calculateDamage(CHARACTER* character, int* isCrit);           // 데미지 계산
-void levelUp(CHARACTER* character);                               // 캐릭터 레벨업 관련
-void promoteCharacter(CHARACTER* character);                      // 캐릭터 2차 3차 전직 관련
-void textcolor(int colorNum);                                     // 텍스트 컬러 입히기 관련
-void enterTown(CHARACTER* character, int* dun_lev);               // 마을 기능 구현
-void inn(CHARACTER* character);                                   // 마을 내부 여관
-void blacksmith(CHARACTER* character);                            // 마을 내부 대장간
-void upgrade_weapon(CHARACTER* character);                        // 대장간에서 무기 업그레이드 기능
-void waitForKeyPress();                                           // 사용자의 입력 Default값을 Enter key로 지정
-void printCritMessage(const char* attacker, const char* target, int isPlayer);  // 크리티컬 데미지 출력
-int clampHP(int hp);     // 캐릭터의 체력 표시
-int clampAndCheckDeath(int* hp); // clampHP를 비교해서 캐릭터의 사망 판정
-int isBossFloor(int dun_lev);  // 보스층 진입 확인용
-void resetBoss(MOP* boss, int level, int isNight); // 보스 init 기능
-void fightBoss(CHARACTER* character, MOP* boss, int dun_lev); // 보스와의 전투
-void SetWarrior(CHARACTER* character); // 캐릭터의 셋팅을 전사 클래스에 맞춰서 작성 
-void SetArcher(CHARACTER* character);  // 캐릭터의 셋팅을 궁수 클래스에 맞춰서 작성
-void SetMage(CHARACTER* character);    // 캐릭터의 셋팅을 마법사 클래스에 맞춰서 작성
-void SetRogue(CHARACTER* character);   // 캐릭터의 셋팅을 도적 클래스에 맞춰서 작서 
-void getCurrentDate(char* buffer, size_t size); // 캐릭터의 세이브 파일 작성 시 현재 날짜와 시간을 가져 옴
-void SaveRanking(const CHARACTER* character, int floor); // 랭킹 저장용
-void showSaveSlots();    // 세이브 슬롯 관리용
+void showMainMenu(CHARACTER* character, MOP* mop, int* dun_lev);                  // 메인메뉴 출력
+int loadGame(CHARACTER* character, int* dun_lev);                                 // 세이브 파일 로드
+void saveGame(const CHARACTER* character, int dun_lev);                           // 게임 내용 세이브를 위한 함수
+void CreateCharacter(CHARACTER* character);                                       // 캐릭터 생성 함수
+void PrintCharacterStat(CHARACTER* character);                                    // 캐릭터 스탯 print 함수
+void gameLoop(CHARACTER* character, MOP* mop, int* dun_lev);                      // 게임 시스템 전용 함수
+int enterDungeon(int* dun_lev, CHARACTER* character, MOP* mop);                   // 던전 진입
+void fightmop(CHARACTER* character, MOP* mop, int dun_lev);                       // 게임 전반 몬스터와의 전투 시 작동
+void nextDun(int* dun_lev, MOP* mop, CHARACTER* character);                       // 해당 층 클리어 이후 다음 층으로 이동
+void resetMop(MOP* mop, int difficulty, int isNight);                             // 몬스터 정보 초기화
+int calculateDamage(CHARACTER* character, int* isCrit);                           // 데미지 계산
+void levelUp(CHARACTER* character);                                               // 캐릭터 레벨업 관련
+void promoteCharacter(CHARACTER* character);                                      // 캐릭터 2차 3차 전직 관련
+void textcolor(int colorNum);                                                     // 텍스트 컬러 입히기 관련
+void enterTown(CHARACTER* character, int* dun_lev);                               // 마을 기능 구현
+void inn(CHARACTER* character);                                                   // 마을 내부 여관
+void blacksmith(CHARACTER* character);                                            // 마을 내부 대장간
+void upgrade_weapon(CHARACTER* character);                                        // 대장간에서 무기 업그레이드 기능
+void waitForKeyPress();                                                           // 사용자의 입력 Default값을 Enter key로 지정
+void printCritMessage(const char* attacker, const char* target, int isPlayer);    // 크리티컬 데미지 출력
+int clampHP(int hp);                                                              // 캐릭터의 체력 표시
+int clampAndCheckDeath(int* hp);                                                  // clampHP를 비교해서 캐릭터의 사망 판정
+int isBossFloor(int dun_lev);                                                     // 보스층 진입 확인용
+void resetBoss(MOP* boss, int level, int isNight);                                // 보스 초기화 기능
+void fightBoss(CHARACTER* character, MOP* boss, int dun_lev);                     // 보스와의 전투
+void SetWarrior(CHARACTER* character);                                            // 캐릭터의 셋팅을 전사 클래스에 맞춰서 작성 
+void SetArcher(CHARACTER* character);                                             // 캐릭터의 셋팅을 궁수 클래스에 맞춰서 작성
+void SetMage(CHARACTER* character);                                               // 캐릭터의 셋팅을 마법사 클래스에 맞춰서 작성
+void SetRogue(CHARACTER* character);                                              // 캐릭터의 셋팅을 도적 클래스에 맞춰서 작서 
+void getCurrentDate(char* buffer, size_t size);                                   // 캐릭터의 세이브 파일 작성 시 현재 날짜와 시간을 가져 옴
+void SaveRanking(const CHARACTER* character, int floor);                          // 랭킹 저장용
+void showSaveSlots();                                                             // 세이브 슬롯 관리용
 
 /****** Main ******/
 int main(void) {
