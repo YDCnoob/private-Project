@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>C/C++ 검색기</title>
+        <style>
+            body {
+                background: linear-gradient(135deg, #1e3c72, #2a5298);
+                font-family: Arial, sans-serif;
+                text-align: center;
+                padding-top: 100px;
+                margin: 0;
+                min-height: 100vh;
+                color: #fff;
+            }
+            h1 {
+                font-size: 48px;
+                margin-bottom: 10px;
+            }
+            p {
+                font-size: 18px;
+                color: #ddd;
+                margin-bottom: 50px;
+            }
+            .search-container {
+                background-color: rgba(255, 255, 255, 0.1);
+                padding: 40px;
+                border-radius: 20px;
+                display: inline-block;
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+            #searchInput {
+                width: 300px;
+                padding: 15px 20px;
+                font-size: 18px;
+                border: 2px solid #ccc;
+                border-radius: 30px;
+                outline: none;
+                margin-right: 10px;
+                transition: 0.3s;
+            }
+            #searchInput:focus {
+                border-color: #00e0ff;
+                box-shadow: 0 0 10px rgba(0, 224, 255, 0.7);
+                transform: scale(1.05);
+            }
+            #searchButton {
+                padding: 15px 25px;
+                font-size: 18px;
+                background-color: #00e0ff;
+                color: #333;
+                border: none;
+                border-radius: 30px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+            #searchButton:hover {
+                background-color: #00b5cc;
+                transform: scale(1.05);
+            }
+        </style>
+        <script>
+            function searchresult() {
+                const search = document.getElementById('searchInput').value.trim();
+                if (search) {
+                    const cppURL = `https://www.cplusplus.com/search.do?q=${encodeURIComponent(search)}`;
+                    window.open(cppURL, '_blank');
+                } else {
+                    alert('검색어를 입력해주세요!');
+                }
+            }
+            window.onload = function() {
+                const input = document.getElementById('searchInput');
+                input.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') {
+                        searchresult();
+                    }
+                });
+            };
+        </script>
+    </head>
+    <body>
+        <h1>C/C++ 검색기</h1>
+        <p>Cplusplus.com 공식 문서로 연결됩니다</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="검색할 함수나 키워드 입력">
+            <button id="searchButton" onclick="searchresult()">검색</button>
+        </div>
+    </body>
+    </html>
